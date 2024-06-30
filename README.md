@@ -16,29 +16,29 @@
 
    ```
    # Linux / Mac (리눅스 / 맥)
-   $ curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+   curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 
    # Windows (윈도우)
-   $ (Invoke-WebRequest -Uri https://pdm-project.org/install-pdm.py -UseBasicParsing).Content | py -
+   (Invoke-WebRequest -Uri https://pdm-project.org/install-pdm.py -UseBasicParsing).Content | py -
    ```
 
 2. 프로젝트 폴더에서 파이썬 패키지 설치
    ```
-   $ pdm install
+   pdm install
    ```
 
 3. 프로젝트에 새로운 패키지를 설치 / 삭제하고 싶을 시,
    ```
    # 설치
-   $ pdm add <패키지 이름>
+   pdm add <패키지 이름>
 
    # 삭제
-   $ pdm remove <패키지 이름>
+   pdm remove <패키지 이름>
    ```
 
 4. 가상 환경 실행
    ```
-   $ eval $(pdm venv activate in-project)
+   eval $(pdm venv activate in-project)
    ```
 
 #### pre-commit 설정
