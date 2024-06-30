@@ -1,4 +1,7 @@
 # 루미나리 벡엔드
+
+[![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white)](https://aivle-5-16.postman.co/workspace/Luminari~98554664-d63c-44f0-a043-a9d9b0159655/collection/11122919-e5e0cddb-a5c2-42d9-aa93-4d7830f3e7c5?active-environment=11122919-8185b909-67ba-40d4-b97a-878b1a1302b6)
+
 스마트 HRM 플랫폼, 루미나리 백엔드 소스코드입니다.
 
 ## 시작 가이드
