@@ -59,3 +59,6 @@ python manage.py migrate
 python manage.py createcustomgroup
 python manage.py runserver
 ```
+
+### 개발 중 주의사항
+* __(어느 정도 안정화될 때까지) Pull Request (PR)을 통해서만 main 브랜치에 머지하기!__
