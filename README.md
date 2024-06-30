@@ -47,3 +47,12 @@ Git hook을 통해 커밋 전에 코드 스타일 등 간단한 코드 리뷰를
    ```
    pre-commit install
    ```
+
+#### Django 로컬 서버 시작
+```
+cd src
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createcustomgroup
+python manage.py runserver
+```
