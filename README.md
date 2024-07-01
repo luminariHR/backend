@@ -41,7 +41,11 @@
 
 4. 가상 환경 실행
    ```
+   # Mac
    eval $(pdm venv activate in-project)
+
+   # Window
+   .venv\Scripts\activate
    ```
 
 #### pre-commit 설정
