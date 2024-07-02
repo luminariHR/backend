@@ -26,6 +26,8 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     re_path(r"api/(?P<version>(v1))/departments/", include("departments.urls")),
+    re_path(r"api/(?P<version>(v1))/todo/", include("todos.urls")),
+    # re_path(r"api/(?P<version>(v1))/admin/todos/", include("todos.admin_urls")),
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
         r"api/(?P<version>(v1|v2))/token/",
