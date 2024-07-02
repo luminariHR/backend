@@ -126,7 +126,6 @@ class TaskSerializer(serializers.ModelSerializer):
             )
         next_task_id = validated_data.pop("next_task_id", None)
         if next_task_id is not None:
-            print(self.calculate_order_index(next_task_id, False))
             validated_data["status"], validated_data["order_index"] = (
                 self.calculate_order_index(next_task_id, False)
             )
