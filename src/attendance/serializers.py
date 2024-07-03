@@ -4,6 +4,8 @@ from .models import Attendance
 
 class AttendanceSerializer(serializers.ModelSerializer):
 
+    hours_worked = serializers.SerializerMethodField()
+
     class Meta:
         model = Attendance
         fields = "__all__"
@@ -13,6 +15,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
             "is_late",
             "is_early_leave",
             "is_excused",
+            "hours_worked",
             "overtime",
             "hr_note",
         ]
@@ -32,6 +35,9 @@ class AttendanceSerializer(serializers.ModelSerializer):
         if "clock_out_note" in validated_data:
             data["clock_out_note"] = validated_data.get("clock_out_note")
         return super().update(instance, data)
+
+    def get_hours_worked(self, obj):
+        return obj.get_hours_worked()
 
 
 class AdminAttendanceSerializer(serializers.ModelSerializer):

@@ -26,3 +26,15 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.employee.employee_id} - {self.date}"
+
+    @staticmethod
+    def calculate_hours(clock_in, clock_out):
+        time_difference = clock_out - clock_in
+        hours = time_difference.total_seconds() / 3600
+
+        return hours
+
+    def get_hours_worked(self):
+        if self.clock_in and self.clock_out:
+            return round(self.calculate_hours(self.clock_in, self.clock_out), 2)
+        return None

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
-from django.db.models import Q, OuterRef, Subquery
+from django.db.models import Q
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from .models import Attendance
@@ -27,7 +27,16 @@ class AttendanceView(APIView):
             & Q(employee_id=request.user.id)
         )
         serializer = AttendanceSerializer(attendance, context=context, many=True)
-        return Response(serializer.data)
+        response_data = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "total_hours": 0,
+            "data": serializer.data,
+        }
+        for att in serializer.data:
+            if att["hours_worked"]:
+                response_data["total_hours"] += att["hours_worked"]
+        return Response(response_data)
 
 
 class ClockInView(APIView):
