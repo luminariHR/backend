@@ -28,6 +28,9 @@ urlpatterns = [
     re_path(r"api/(?P<version>(v1))/departments/", include("departments.urls")),
     re_path(r"api/(?P<version>(v1))/todo/", include("todos.urls")),
     # re_path(r"api/(?P<version>(v1))/admin/todos/", include("todos.admin_urls")),
+    # 근태 관리
+    re_path(r"api/(?P<version>(v1))/attendance/", include("attendance.urls")),
+    # re_path(r"api/(?P<version>(v1))/admin/attendance/", include("todos.admin_urls")),
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
         r"api/(?P<version>(v1|v2))/token/",

@@ -24,3 +24,10 @@ class IsTaskAssignee(permissions.BasePermission):
         if request.method in ["HEAD", "OPTIONS"]:
             return True
         return obj.assignee == request.user
+
+
+class IsSelfAttendance(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in ["HEAD", "OPTIONS"]:
+            return True
+        return obj.employee == request.user
