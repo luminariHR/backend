@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "todos",
     "core",
     "attendance",
+    "events",
     "rest_framework",
 ]
 
