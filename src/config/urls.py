@@ -39,4 +39,5 @@ urlpatterns = [
         TokenRefreshView.as_view(),
         name="token_refresh",
     ),
+    re_path(r"api/(?P<version>(v1))/chatbot/", include("chatbot.urls")),
 ]

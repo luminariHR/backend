@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "todos",
     "core",
     "rest_framework",
+    "chatbot",
 ]
 
 MIDDLEWARE = [
@@ -150,3 +151,9 @@ SIMPLE_JWT = {
 
 # GLOBAL VARIABLES
 HR_ADMIN_GROUP_NAME = "HR 관리자"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
