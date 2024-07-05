@@ -122,3 +122,19 @@ class AdminEventsView(APIView):
                 {"message": "성공적으로 수정됐습니다.", "data": serializer.data}
             )
         return Response({"errors": serializer.errors}, status=400)
+
+    def delete(self, request, version, event_id: str):
+        context = {"request": request}
+        try:
+            event = Event.objects.get(id=event_id)
+            self.check_object_permissions(self.request, event)
+        except Event.DoesNotExist:
+            return Response(
+                {"message": "존재하지 않는 일정입니다."},
+                status=404,
+            )
+        serializer = EventSerializer(
+            event, data=request.data, partial=True, context=context
+        )
+        serializer.delete(event)
+        return Response({"message": "성공적으로 일정이 삭제됐습니다."}, status=200)

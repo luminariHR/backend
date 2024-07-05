@@ -33,3 +33,6 @@ class EventSerializer(serializers.ModelSerializer):
         validated_data["author"] = request.user
 
         return super().update(instance, validated_data)
+
+    def delete(self, instance):
+        instance.delete()
