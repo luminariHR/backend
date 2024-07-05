@@ -26,11 +26,15 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     re_path(r"api/(?P<version>(v1))/departments/", include("departments.urls")),
+    # 주별 업무
     re_path(r"api/(?P<version>(v1))/todo/", include("todos.urls")),
     # re_path(r"api/(?P<version>(v1))/admin/todos/", include("todos.admin_urls")),
     # 근태 관리
     re_path(r"api/(?P<version>(v1))/attendance/", include("attendance.urls")),
     # re_path(r"api/(?P<version>(v1))/admin/attendance/", include("todos.admin_urls")),
+    # 일정 관리
+    re_path(r"api/(?P<version>(v1))/events/", include("events.urls")),
+    re_path(r"api/(?P<version>(v1))/admin/events/", include("events.admin_urls")),
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
         r"api/(?P<version>(v1|v2))/token/",
