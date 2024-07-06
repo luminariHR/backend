@@ -2,6 +2,7 @@ services:
   web:
     environment:
       DJANGO_ENV: "development"
+    image: luminari_web:latest
     build:
       context: .
       dockerfile: docker/api/Dockerfile
@@ -16,6 +17,7 @@ services:
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
+    image: luminari_nginx:latest
     volumes:
       - static_volume:/app/static
       - ./docker/nginx/conf/:/etc/nginx/conf.d/:ro
@@ -29,6 +31,7 @@ services:
       - web
 
   certbot:
+    image: luminari_certbot:latest
     build:
       context: .
       dockerfile: docker/certbot/Dockerfile

@@ -26,12 +26,12 @@ COPY docker/api/entrypoint.sh /app/entrypoint.sh
 # Make entrypoint script executable
 RUN chmod +x /app/entrypoint.sh
 
+WORKDIR /app/src
+
 RUN /app/entrypoint.sh
 
 # Expose the port Daphne will run on
 EXPOSE 8000
-
-WORKDIR /app/src
 
 # Start Daphne server
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]
