@@ -38,6 +38,11 @@ jobs:
               echo 'ALLOWED_HOSTS = "${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}"'
               echo 'DEBUG = "${{ secrets.DEV_DJANGO_DEBUG }}"'
               echo 'CSRF_TRUSTED_ORIGINS = "${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}"'
+              echo 'DB_NAME = "${{ secrets.DEV_DJANGO_DB_NAME }}"'
+              echo 'DB_USER = "${{ secrets.DEV_DJANGO_DB_USER }}"'
+              echo 'DB_PASSWORD = "${{ secrets.DEV_DJANGO_DB_PASSWORD }}"'
+              echo 'DB_HOST = "${{ secrets.DEV_DJANGO_DB_HOST }}"'
+              echo 'DB_PORT = "${{ secrets.DEV_DJANGO_DB_PORT }}"'
           } > .env.dev
 
       - name: Build and push Docker images
