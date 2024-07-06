@@ -56,12 +56,12 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker-compose -f docker-compose.yml build
-          docker tag backend-nginx:latest ${{ secrets.DOCKER_IMAGE }}:dev-nginx
-          docker push ${{ secrets.DOCKER_IMAGE }}:dev-nginx
-          docker tag backend-web:latest ${{ secrets.DOCKER_IMAGE }}:dev-web
-          docker push ${{ secrets.DOCKER_IMAGE }}:dev-web
-          docker tag backend-certbot:latest ${{ secrets.DOCKER_IMAGE }}:dev-certbot
-          docker push ${{ secrets.DOCKER_IMAGE }}:dev-certbot
+          docker tag luminari_nginx:latest ${{ secrets.DOCKER_IMAGE }}:dev_luminari_nginx
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev_luminari_nginx
+          docker tag luminari_web:latest ${{ secrets.DOCKER_IMAGE }}:dev_luminari_web
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev_luminari_web
+          docker tag luminari_certbot:latest ${{ secrets.DOCKER_IMAGE }}:dev_luminari_certbot
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev_luminari_certbot
 
       - name: Deploy to server
         env:
