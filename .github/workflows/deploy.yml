@@ -34,10 +34,10 @@ jobs:
       - name: Create .env file
         run: |
           {
-            echo "SECRET_KEY=${{ secrets.DEV_DJANGO_SECRET_KEY }}"
-            echo "ALLOWED_HOSTS=${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}"
-            echo "DEBUG=${{ secrets.DEV_DJANGO_DEBUG }}"
-            echo "CSRF_TRUSTED_ORIGINS=${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}"
+              echo 'SECRET_KEY = "${{ secrets.DEV_DJANGO_SECRET_KEY }}"'
+              echo 'ALLOWED_HOSTS = "${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}"'
+              echo 'DEBUG = "${{ secrets.DEV_DJANGO_DEBUG }}"'
+              echo 'CSRF_TRUSTED_ORIGINS = "${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}"'
           } > .env.dev
 
       - name: Build and push Docker images
