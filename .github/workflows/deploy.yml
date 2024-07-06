@@ -1,0 +1,69 @@
+name: 개발 API 배포
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        ports:
+          - 80:80
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Create .env file
+        run: |
+          echo "SECRET_KEY=${{ secrets.DEV_DJANGO_SECRET_KEY }}" >> .env.dev
+          echo "ALLOWED_HOSTS=${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}" >> .env.dev
+          echo "DEBUG=${{ secrets.DEV_DJANGO_DEBUG }}" >> .env.dev
+          echo "DEBUG=${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}" >> .env.dev
+
+      - name: Build and push Docker images
+        env:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker-compose -f docker-compose.yml build
+          docker tag backend-nginx:latest ${{ secrets.DOCKER_IMAGE }}:dev-nginx
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev-nginx
+          docker tag backend-web:latest ${{ secrets.DOCKER_IMAGE }}:dev-web
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev-web
+          docker tag backend-certbot:latest ${{ secrets.DOCKER_IMAGE }}:dev-certbot
+          docker push ${{ secrets.DOCKER_IMAGE }}:dev-certbot
+
+      - name: Deploy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.DEV_SSH_USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/${{ secrets.DEV_SSH_USERNAME }}/
+          ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml pull && docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml up -d"
