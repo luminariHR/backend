@@ -32,19 +32,13 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Create .env file
-        env:
-          SECRET_KEY: ${{ secrets.DEV_DJANGO_SECRET_KEY }}
-          ALLOWED_HOSTS: ${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}
-          DEBUG: ${{ secrets.DEV_DJANGO_DEBUG }}
-          CSRF_TRUSTED_ORIGINS: ${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}
         run: |
           {
-              echo 'SECRET_KEY = "$SECRET_KEY"'
-              echo 'ALLOWED_HOSTS = "$ALLOWED_HOSTS"'
-              echo 'DEBUG = "$DEBUG"'
-              echo 'CSRF_TRUSTED_ORIGINS = "$CSRF_TRUSTED_ORIGINS"'
+              echo 'SECRET_KEY = "${{ secrets.DEV_DJANGO_SECRET_KEY }}"'
+              echo 'ALLOWED_HOSTS = "${{ secrets.DEV_DJANGO_ALLOWED_HOSTS }}"'
+              echo 'DEBUG = "${{ secrets.DEV_DJANGO_DEBUG }}"'
+              echo 'CSRF_TRUSTED_ORIGINS = "${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}"'
           } > .env.dev
-          ls -a
 
       - name: Build and push Docker images
         env:
