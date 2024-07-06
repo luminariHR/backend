@@ -11,6 +11,7 @@ dependencies = [
     "channels[daphne]>=4.1.0",
     "djangorestframework-simplejwt[crypto]>=5.3.1",
     "python-dotenv>=1.0.1",
+    "psycopg[binary]>=3.2.1",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"

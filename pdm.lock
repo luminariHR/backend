@@ -5,7 +5,7 @@
 groups = ["default", "lint", "hook"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.2"
-content_hash = "sha256:f32d9cbd888eb658c7a5313c402ebbf0d17518cc758cb16a8201bdb71506e199"
+content_hash = "sha256:e534ff7116e68f2c54d6780ad7304086f75512cf994a3cb4b80af8b70cf28f0c"
 
 [[package]]
 name = "asgiref"
@@ -445,6 +445,58 @@ dependencies = [
 files = [
     {file = "pre_commit-3.7.1-py2.py3-none-any.whl", hash = "sha256:fae36fd1d7ad7d6a5a1c0b0d5adb2ed1a3bda5a21bf6c3e5372073d7a11cd4c5"},
     {file = "pre_commit-3.7.1.tar.gz", hash = "sha256:8ca3ad567bc78a4972a3f1a477e94a79d4597e8140a6e0b651c5e33899c3654a"},
+]
+
+[[package]]
+name = "psycopg"
+version = "3.2.1"
+requires_python = ">=3.8"
+summary = "PostgreSQL database adapter for Python"
+groups = ["default"]
+dependencies = [
+    "typing-extensions>=4.4",
+    "tzdata; sys_platform == \"win32\"",
+]
+files = [
+    {file = "psycopg-3.2.1-py3-none-any.whl", hash = "sha256:ece385fb413a37db332f97c49208b36cf030ff02b199d7635ed2fbd378724175"},
+    {file = "psycopg-3.2.1.tar.gz", hash = "sha256:dc8da6dc8729dacacda3cc2f17d2c9397a70a66cf0d2b69c91065d60d5f00cb7"},
+]
+
+[[package]]
+name = "psycopg-binary"
+version = "3.2.1"
+requires_python = ">=3.8"
+summary = "PostgreSQL database adapter for Python -- C optimisation distribution"
+groups = ["default"]
+marker = "implementation_name != \"pypy\""
+files = [
+    {file = "psycopg_binary-3.2.1-cp311-cp311-macosx_12_0_x86_64.whl", hash = "sha256:62b1b7b07e00ee490afb39c0a47d8282a9c2822c7cfed9553a04b0058adf7e7f"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:f8afb07114ea9b924a4a0305ceb15354ccf0ef3c0e14d54b8dbeb03e50182dd7"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:40bb515d042f6a345714ec0403df68ccf13f73b05e567837d80c886c7c9d3805"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6418712ba63cebb0c88c050b3997185b0ef54173b36568522d5634ac06153040"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:101472468d59c74bb8565fab603e032803fd533d16be4b2d13da1bab8deb32a3"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa3931f308ab4a479d0ee22dc04bea867a6365cac0172e5ddcba359da043854b"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:dc314a47d44fe1a8069b075a64abffad347a3a1d8652fed1bab5d3baea37acb2"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:cc304a46be1e291031148d9d95c12451ffe783ff0cc72f18e2cc7ec43cdb8c68"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-musllinux_1_2_ppc64le.whl", hash = "sha256:6f9e13600647087df5928875559f0eb8f496f53e6278b7da9511b4b3d0aff960"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:b140182830c76c74d17eba27df3755a46442ce8d4fb299e7f1cf2f74a87c877b"},
+    {file = "psycopg_binary-3.2.1-cp311-cp311-win_amd64.whl", hash = "sha256:3c838806eeb99af39f934b7999e35f947a8e577997cc892c12b5053a97a9057f"},
+]
+
+[[package]]
+name = "psycopg"
+version = "3.2.1"
+extras = ["binary"]
+requires_python = ">=3.8"
+summary = "PostgreSQL database adapter for Python"
+groups = ["default"]
+dependencies = [
+    "psycopg-binary==3.2.1; implementation_name != \"pypy\"",
+    "psycopg==3.2.1",
+]
+files = [
+    {file = "psycopg-3.2.1-py3-none-any.whl", hash = "sha256:ece385fb413a37db332f97c49208b36cf030ff02b199d7635ed2fbd378724175"},
+    {file = "psycopg-3.2.1.tar.gz", hash = "sha256:dc8da6dc8729dacacda3cc2f17d2c9397a70a66cf0d2b69c91065d60d5f00cb7"},
 ]
 
 [[package]]
