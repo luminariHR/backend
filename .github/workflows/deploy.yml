@@ -60,7 +60,7 @@ jobs:
           echo "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp docker-compose.yml luminari_nginx.tar luminari_web.tar luminari_certbot.tar ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/${{ secrets.DEV_SSH_USERNAME }}/          ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml pull && docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml up -d"
+          scp docker-compose.yml luminari_nginx.tar luminari_web.tar luminari_certbot.tar ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/${{ secrets.DEV_SSH_USERNAME }}/
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "
                       sudo docker load -i /home/${{ secrets.SSH_USERNAME }}/luminari_nginx.tar &&
                       sudo docker load -i /home/${{ secrets.SSH_USERNAME }}/luminari_web.tar &&
