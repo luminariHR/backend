@@ -39,6 +39,8 @@ jobs:
               echo 'DEBUG = "${{ secrets.DEV_DJANGO_DEBUG }}"'
               echo 'CSRF_TRUSTED_ORIGINS = "${{ secrets.DEV_DJANGO_CSRF_TRUSTED_ORIGINS }}"'
           } > .env.dev
+          cat .env.dev
+          ls
 
       - name: Build and push Docker images
         env:
