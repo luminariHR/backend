@@ -11,6 +11,8 @@ WORKDIR /app
 COPY requirements.txt /app/
 COPY .env.dev /app/
 
+RUN export DJANGO_ENV=development
+
 # Install dependencies using pip
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -30,8 +32,6 @@ RUN /app/entrypoint.sh
 
 # Expose the port Daphne will run on
 EXPOSE 8000
-
-RUN export DJANGO_ENV=development
 
 # Start Daphne server
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]
