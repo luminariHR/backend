@@ -73,5 +73,5 @@ jobs:
           echo "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp docker-compose.yml ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/${{ secrets.DEV_SSH_USERNAME }}/
+          scp docker-compose.yml ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml
           ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml pull && docker-compose -f /home/${{ secrets.DEV_SSH_USERNAME }}/docker-compose.yml up -d"

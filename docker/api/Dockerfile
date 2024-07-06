@@ -17,18 +17,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY src/ /app/src
 
-# Collect static files
-# RUN python manage.py collectstatic --noinput
-
-# Copy entrypoint script
-COPY docker/api/entrypoint.sh /app/entrypoint.sh
-
-# Make entrypoint script executable
-RUN chmod +x /app/entrypoint.sh
-
 WORKDIR /app/src
 
-RUN /app/entrypoint.sh
+ENV DJANGO_ENV=development
+
+RUN python manage.py migrate
+
+RUN python manage.py collectstatic --noinput
+
+RUN python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='admin@luminari.com').exists() or User.objects.create_superuser(email='admin@luminari.com', password='luminari1!')"
 
 # Expose the port Daphne will run on
 EXPOSE 8000
