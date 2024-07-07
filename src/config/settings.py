@@ -82,9 +82,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 if DJANGO_ENV == "local":
     DATABASES = {
@@ -93,6 +92,8 @@ if DJANGO_ENV == "local":
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 else:
     DATABASES = {
         "default": {
@@ -105,6 +106,8 @@ else:
         }
     }
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
+    STATIC_ROOT = os.path.join("/app/", "static")
+    MEDIA_ROOT = os.path.join("/app/", "media")
 
 
 # Password validation
@@ -139,17 +142,6 @@ USE_L10N = True
 
 USE_TZ = False
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-# Static files settings
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-# Media files settings
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
