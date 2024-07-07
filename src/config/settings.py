@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "core",
     "attendance",
     "events",
+    "notifications",
     "rest_framework",
 ]
 
@@ -84,6 +85,9 @@ ASGI_APPLICATION = "config.asgi.application"
 
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
+
+# TODO: REDIS로 교체
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 if DJANGO_ENV == "local":
     DATABASES = {
