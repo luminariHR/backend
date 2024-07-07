@@ -1,11 +1,16 @@
 from .models import Department, DepartmentUser
-from .serializers import DepartmentSerializer, DepartmentListSerializer
+from .serializers import (
+    DepartmentSerializer,
+    DepartmentListSerializer,
+    AdminDepartmentSerializer,
+)
 from django.db.models import Prefetch
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from core.permissions import IsHRAdmin
 
 
 class DepartmentListView(APIView):
@@ -32,3 +37,17 @@ class DepartmentView(APIView):
         ).prefetch_related(Prefetch("members", queryset=active_members))
         serializer = DepartmentSerializer(departments_with_active_members, many=True)
         return Response(serializer.data)
+
+
+# HR 관리자 View
+class AdminDepartmentView(APIView):
+
+    permission_classes = [IsHRAdmin]
+
+    def post(self, request, version):
+        context = {"request": request}
+
+
+class AdminDepartmentMembersView(APIView):
+
+    permission_classes = [IsHRAdmin]

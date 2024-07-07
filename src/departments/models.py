@@ -1,5 +1,4 @@
 from django.db import models
-
 from core.models import AbstractBaseModel
 from users.models import Employee
 
@@ -8,6 +7,7 @@ class Department(AbstractBaseModel):
 
     department_id = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=50)
+    address = models.CharField(max_length=300, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     parent_department = models.ForeignKey(
         "self",

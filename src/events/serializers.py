@@ -12,7 +12,6 @@ class EventSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         instance = Event(**data)
-
         try:
             instance.clean()
         except ValidationError as e:
@@ -24,14 +23,12 @@ class EventSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         # 작성자는 무조건 본인으로 지정
         validated_data["author"] = request.user
-
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         request = self.context["request"]
         # 작성자는 무조건 본인으로 지정
         validated_data["author"] = request.user
-
         return super().update(instance, validated_data)
 
     def delete(self, instance):
