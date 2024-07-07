@@ -30,7 +30,6 @@ load_dotenv(env_path)
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG") == "True"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
 
 
 # Application definition
@@ -105,6 +104,7 @@ else:
             "PORT": os.environ.get("DB_PORT"),
         }
     }
+    CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
 
 
 # Password validation

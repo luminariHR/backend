@@ -24,7 +24,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Department
-        fields = ["department_id", "name", "parent_department_id", "members"]
+        fields = ["id", "department_id", "name", "parent_department_id", "members"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -39,7 +39,7 @@ class DepartmentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Department
-        fields = ["department_id", "name", "parent_department_id", "is_deleted"]
+        fields = ["id", "department_id", "name", "parent_department_id", "is_deleted"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
