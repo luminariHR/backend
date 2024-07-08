@@ -20,6 +20,7 @@ COPY src/ /app/src
 WORKDIR /app/src
 
 ENV DJANGO_ENV=development
+ENV DJANGO_SETTINGS_MODULE=config.settings
 
 RUN python manage.py migrate
 
