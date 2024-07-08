@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import AdminDepartmentMembersView
+from .views import AdminDepartmentCreateView, AdminDepartmentUpdateView
 
 urlpatterns = [
-    path("", AdminDepartmentMembersView.as_view()),
+    path("", AdminDepartmentCreateView.as_view()),
+    path("<int:department_id>", AdminDepartmentUpdateView.as_view()),
 ]

@@ -1,10 +1,10 @@
-from .models import Department, DepartmentUser
+from .models import Department
 from .serializers import (
     DepartmentSerializer,
     DepartmentListSerializer,
     AdminDepartmentSerializer,
 )
-from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
@@ -31,23 +31,51 @@ class DepartmentListView(APIView):
 class DepartmentView(APIView):
     @permission_classes([IsAuthenticated])
     def get(self, request, version, dept_id):
-        active_members = DepartmentUser.objects.filter(is_current=True)
-        departments_with_active_members = Department.objects.filter(
-            id=dept_id
-        ).prefetch_related(Prefetch("members", queryset=active_members))
-        serializer = DepartmentSerializer(departments_with_active_members, many=True)
+        departments = Department.objects.filter(id=dept_id)
+        serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
 
 
 # HR 관리자 View
-class AdminDepartmentView(APIView):
+class AdminDepartmentCreateView(APIView):
 
     permission_classes = [IsHRAdmin]
 
     def post(self, request, version):
         context = {"request": request}
+        serializer = AdminDepartmentSerializer(data=request.data, context=context)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    "message": "성공적으로 부서가 생성되었습니다.",
+                    "data": serializer.data,
+                }
+            )
+        return Response(serializer.errors, status=400)
 
 
-class AdminDepartmentMembersView(APIView):
+class AdminDepartmentUpdateView(APIView):
 
     permission_classes = [IsHRAdmin]
+
+    def get_department(self, department_id):
+        department = get_object_or_404(Department, id=department_id)
+        self.check_object_permissions(self.request, department)
+        return department
+
+    def patch(self, request, version, department_id):
+        context = {"request": request}
+        department = self.get_department(department_id)
+        serializer = AdminDepartmentSerializer(
+            department, data=request.data, partial=True, context=context
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    "message": "부서가 성공적으로 업데이트 됐습니다.",
+                    "data": serializer.data,
+                }
+            )
+        return Response({"errors": serializer.errors}, status=400)

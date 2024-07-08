@@ -58,6 +58,13 @@ class Employee(AbstractUser):
     phone_number = models.CharField(max_length=50, null=True)
     start_date = models.DateField(default=timezone.now)
     end_date = models.DateField(null=True, blank=True)
+    department = models.ForeignKey(
+        "departments.Department",
+        related_name="members",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     # Auth
     USERNAME_FIELD = "email"
