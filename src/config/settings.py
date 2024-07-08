@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "events",
     "notifications",
     "rest_framework",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
