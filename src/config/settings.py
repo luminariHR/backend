@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "notifications",
     "rest_framework",
     "corsheaders",
+    "messenger",
 ]
 
 MIDDLEWARE = [
