@@ -18,3 +18,7 @@ repos:
         args: [ '-o', 'requirements.txt', '--without-hashes' ]
         files: ^pdm.lock$
       - id: pdm-lock-check
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.16.1
+    hooks:
+      - id: gitleaks
