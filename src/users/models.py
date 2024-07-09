@@ -142,12 +142,12 @@ class Employee(AbstractUser):
                 else current_date.month
             )
             if self.start_date.year < current_date.year:
-                for month in range(self.start_date.month, 13):
+                for month in range(self.start_date.month + 1, 13):
                     ranges.append((self.start_date.year, month))
                 for month in range(1, end_month):
                     ranges.append((current_date.year, month))
             else:
-                for month in range(self.start_date.month, end_month):
+                for month in range(self.start_date.month + 1, end_month):
                     ranges.append((current_date.year, month))
             ptos = len(ranges)
             for year, month in ranges:
