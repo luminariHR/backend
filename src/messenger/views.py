@@ -15,22 +15,13 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     def join(self, request, pk=None, *args, **kwargs):
         chat_room = self.get_object()
         employee = request.user
-            
-        # try:
-        #     participant = ChatRoomParticipant.objects.get(employee=employee, chat_room=chat_room, left_at__isnull=True)
-        # except ChatRoomParticipant.MultipleObjectsReturned:
-        #     participant = ChatRoomParticipant.objects.filter(employee=employee, chat_room=chat_room, left_at__isnull=True).first()
-
-        # if not participant:
-        #     participant = ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room) 
         try:
-            participant = ChatRoomParticipant.objects.get(employee=employee, chat_room=chat_room, left_at__isnull=True)
+            ChatRoomParticipant.objects.get(employee=employee, chat_room=chat_room, left_at__isnull=True)
         except ChatRoomParticipant.DoesNotExist:
-            participant = ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room)
+            ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room)
         except ChatRoomParticipant.MultipleObjectsReturned:
-            # Handle multiple participants (this is rare but needs to be handled)
             participants = ChatRoomParticipant.objects.filter(employee=employee, chat_room=chat_room, left_at__isnull=True)
-            participant = participants.first()     
+            participants.exclude(pk=participants.first().pk).delete()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'])
@@ -39,8 +30,6 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         employee = request.user
         participant = ChatRoomParticipant.objects.filter(employee=employee, chat_room=chat_room, left_at__isnull=True).first()
         if participant:
-            # participant.left_at = timezone.now()
-            # participant.save()
             participant.delete()
         return Response(status=status.HTTP_200_OK)
     
