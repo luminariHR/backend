@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "attendance",
     "events",
     "notifications",
+    "appointments",
     "rest_framework",
     "corsheaders",
 ]
