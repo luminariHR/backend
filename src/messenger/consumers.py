@@ -2,6 +2,11 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Message
 from users.models import Employee
+from asgiref.sync import sync_to_async
+from django.contrib.auth.models import AnonymousUser
+import jwt
+from django.conf import settings
+from urllib.parse import parse_qs
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -26,11 +31,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         message = data['message']
-        sender = self.scope["user"]
-        chat_room = ChatRoom.objects.get(name=self.room_name)
-
-        # Save message to the database
-        Message.objects.create(
+        employee = self.scope["user"]
+        sender = await sync_to_async(Employee.objects.get)(email=employee)
+        chat_room = await sync_to_async(ChatRoom.objects.get)(name=self.room_name)
+        
+        await sync_to_async(Message.objects.create)(
             chat_room=chat_room,
             sender=sender,
             content=message
@@ -55,3 +60,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'username': username
         }))
+        
