@@ -98,7 +98,7 @@ class AdminDepartmentSerializer(serializers.ModelSerializer):
                 )
                 if self._creates_cycle(department, parent_department):
                     raise serializers.ValidationError(
-                        "하위 부서가 상위 부서가 될 수 없습니다 (사이클)."
+                        "하위 부서가 상위 부서가 될 수 없습니다."
                     )
                 data["parent_department"] = parent_department
             except Department.DoesNotExist:

@@ -79,3 +79,19 @@ class AdminDepartmentUpdateView(APIView):
                 }
             )
         return Response({"errors": serializer.errors}, status=400)
+
+    def delete(self, request, version, department_id):
+        context = {"request": request}
+        department = self.get_department(department_id)
+        serializer = AdminDepartmentSerializer(
+            department, data={"is_deleted": True}, partial=True, context=context
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    "message": "부서가 성공적으로 삭제 됐습니다.",
+                    "data": serializer.data,
+                }
+            )
+        return Response({"errors": serializer.errors}, status=400)
