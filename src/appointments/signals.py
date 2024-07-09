@@ -1,8 +1,9 @@
+import datetime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
-import datetime
 from departments.models import Department
+from notifications.utils import send_notification
 from .models import Appointment
 
 
@@ -21,3 +22,6 @@ def apply_appointment(sender, instance, **kwargs):
             else:
                 employee.department.head = None
             employee.department.save()
+        # 인사 발령 노티
+        message = f"{employee.name} 님, {instance.effective_date} 부로 팀/직책이 변경 되었습니다. 확인해주세요."
+        send_notification(employee.id, message, "appointment_created")
