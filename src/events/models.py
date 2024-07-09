@@ -2,7 +2,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from datetime import datetime
 from core.models import AbstractBaseModel
-from users.models import Employee
 
 
 class Event(AbstractBaseModel):
@@ -31,7 +30,7 @@ class Event(AbstractBaseModel):
     end_time = models.TimeField(null=True, blank=True)
     tag = models.CharField(max_length=20, choices=TAG_CHOICES, default=OTHERS)
     author = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, related_name="events_created"
+        "users.Employee", on_delete=models.CASCADE, related_name="events_created"
     )
     # TODO: images 추가
 

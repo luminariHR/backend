@@ -1,12 +1,11 @@
 from django.db import models
 import datetime
-from users.models import Employee
 
 
 class Attendance(models.Model):
 
     employee = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, related_name="attendance"
+        "users.Employee", on_delete=models.CASCADE, related_name="attendance"
     )
     date = models.DateField(default=datetime.date.today)
     clock_in = models.DateTimeField(blank=True, null=True)
