@@ -43,4 +43,5 @@ urlpatterns = [
         name="token_refresh",
     ),
     re_path(r"api/(?P<version>(v1))/chatbot/", include("chatbot.urls")),
+    re_path(r"api/(?P<version>(v1))/approval/", include("approval.urls")),
 ]
