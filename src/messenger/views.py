@@ -15,12 +15,6 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     def join(self, request, pk=None, *args, **kwargs):
         chat_room = self.get_object()
         employee = request.user
-        # participant, created = ChatRoomParticipant.objects.get_or_create(employee=employee, chat_room=chat_room, left_at__isnull=True)
-        # if not created:
-        #     participant.left_at = None
-        #     participant.save()
-        # else:
-        #     ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room)
             
         try:
             participant = ChatRoomParticipant.objects.get(employee=employee, chat_room=chat_room, left_at__isnull=True)
