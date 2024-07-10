@@ -56,6 +56,7 @@ urlpatterns = [
         TokenRefreshView.as_view(),
         name="token_refresh",
     ),
+    re_path(r"api/(?P<version>(v1|v2))/messenger/", include("messenger.urls")),
 ]
 
 if settings.DEBUG:
