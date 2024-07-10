@@ -18,7 +18,7 @@ class Approval(AbstractBaseModel):
     title = models.CharField(max_length=255)
     document_content = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
-    file = models.FileField(upload_to="documents/", null=True, blank=True)
+    # file = models.FileField(upload_to="documents/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} - {self.status}"
