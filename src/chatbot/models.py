@@ -4,7 +4,9 @@ from users.models import Employee
 
 
 class Message(models.Model):
-    post = models.ForeignKey(Employee, on_delete=models.CASCADE, default="")
+    post = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, default="", related_name="chatbot_posts"
+    )
     datetime = models.DateTimeField(auto_now_add=True)
     question = models.TextField()
     answer = models.TextField()
