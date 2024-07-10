@@ -2,7 +2,7 @@ from django.db import models
 from users.models import Employee
 
 
-class Approval(models.Model):
+class Approval(AbstractBaseModel):
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("approved", "Approved"),
@@ -17,8 +17,6 @@ class Approval(models.Model):
     title = models.CharField(max_length=255)
     document_content = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to="documents/", null=True, blank=True)
 
     def __str__(self):
