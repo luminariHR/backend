@@ -77,7 +77,6 @@ class ClockOutView(APIView):
         context = {"request": request}
         today = timezone.now()
         try:
-            # attendance = Attendance.objects.get(date=today)
             attendance = Attendance.objects.filter(employee=request.user).latest("date")
         except Attendance.DoesNotExist:
             return Response(

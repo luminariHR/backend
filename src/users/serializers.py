@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
 from .models import Employee
-from departments.models import DepartmentUser, Department
+from departments.models import Department
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -33,8 +33,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
     ]
     is_hr_admin = serializers.BooleanField(write_only=False, required=False)
     department = serializers.SerializerMethodField()
-    department_id = serializers.CharField(write_only=True, required=False)
-    is_head = serializers.BooleanField(write_only=True, required=False, default=False)
 
     class Meta:
         model = Employee
@@ -52,24 +50,22 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "end_date",
             "is_hr_admin",
             "department",
-            "department_id",
-            "is_head",
         ]
 
     def is_user_hr_admin(self):
         user = self.context["request"].user
         return user.groups.filter(name=settings.HR_ADMIN_GROUP_NAME).exists()
 
-    def get_department(self, obj):
-        department_user = DepartmentUser.objects.filter(
-            employee=obj, is_current=True
-        ).first()
-        if department_user and department_user.department:
-            serializer_context = {"is_head": department_user.is_head}
-            return DepartmentSerializer(
-                department_user.department, context=serializer_context
-            ).data
-        return None
+    # def get_department(self, obj):
+    #     department_user = DepartmentUser.objects.filter(
+    #         employee=obj, is_current=True
+    #     ).first()
+    #     if department_user and department_user.department:
+    #         serializer_context = {"is_head": department_user.is_head}
+    #         return DepartmentSerializer(
+    #             obj.department, context=serializer_context
+    #         ).data
+    #     return None
 
     @staticmethod
     def add_or_remove_hr_admin_group(is_hr_admin, user):
@@ -80,28 +76,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
             group = Group.objects.get(name=settings.HR_ADMIN_GROUP_NAME)
             group.user_set.remove(user)
 
-    @staticmethod
-    def assign_employee_to_dept(employee, department_id, is_head):
-
-        department = Department.objects.get(department_id=department_id)
-        department_user = DepartmentUser.objects.create(
-            department=department,
-            employee=employee,
-            is_head=is_head,
-        )
-        DepartmentUser.objects.filter(
-            employee=department_user.employee, is_current=True
-        ).exclude(pk=department_user.pk).update(is_current=False)
-        return department_user
-
     def create(self, validated_data):
         is_hr_admin = validated_data.pop("is_hr_admin", False)
-        department_id = validated_data.pop("department_id", None)
-        is_head = validated_data.pop("is_head", False)
         with transaction.atomic():
             user = super().create(validated_data)
-            if department_id:
-                self.assign_employee_to_dept(user, department_id, is_head)
             self.add_or_remove_hr_admin_group(is_hr_admin, user)
 
         return user
@@ -112,12 +90,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
             for field in self.HR_ADMIN_EXCLUSIVE_FIELDS:
                 validated_data.pop(field, None)
         is_hr_admin = validated_data.pop("is_hr_admin", None)
-        department_id = validated_data.pop("department_id", None)
-        is_head = validated_data.pop("is_head", False)
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            if department_id:
-                self.assign_employee_to_dept(instance, department_id, is_head)
             self.add_or_remove_hr_admin_group(is_hr_admin, instance)
         return instance
 

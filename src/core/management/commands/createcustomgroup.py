@@ -1,12 +1,11 @@
 from django.core.management import BaseCommand
 from django.contrib.auth.models import Group, Permission
-from departments.models import Department, DepartmentUser
+from departments.models import Department
 
 
 GROUPS_PERMISSIONS = {
     "HR 관리자": {
         Department: ["add", "change", "delete", "view"],
-        DepartmentUser: ["add", "change", "delete", "view"],
     },
 }
 

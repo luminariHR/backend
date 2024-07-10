@@ -190,3 +190,5 @@ media
 .DS_Store
 .idea/
 .idea/**
+
+.env.*
