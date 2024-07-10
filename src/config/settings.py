@@ -51,8 +51,10 @@ INSTALLED_APPS = [
     "notifications",
     "appointments",
     "rest_framework",
-    "corsheaders",
+    "chatbot",
+    "approval",
     "messenger",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
