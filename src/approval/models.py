@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import Employee
+from core.models import AbstractBaseModel
 
 
 class Approval(AbstractBaseModel):
