@@ -1,14 +1,12 @@
 from django.db import models
 from users.models import Employee
 
-# Create your models here.
-
 
 class Approval(models.Model):
     STATUS_CHOICES = [
-        ("pending", "대기"),
-        ("approved", "승인"),
-        ("rejected", "반려"),
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
     ]
     requester = models.ForeignKey(
         Employee, on_delete=models.CASCADE, related_name="requests"
@@ -25,6 +23,3 @@ class Approval(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.status}"
-
-
-# Create your models here.
