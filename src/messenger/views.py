@@ -80,7 +80,6 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         chat_room_participants = ChatRoomParticipant.objects.filter(
             chat_room=chat_room
         ).values_list("employee_id", flat=True)
-        print(chat_room_participants)
         user_id = request.data.get("user_id")
         if not user_id:
             return Response(
