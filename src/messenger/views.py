@@ -13,23 +13,6 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
 
-    # @action(detail=True, methods=["post"])
-    # def join(self, request, pk=None, *args, **kwargs):
-    #     chat_room = self.get_object()
-    #     employee = request.user
-    #     try:
-    #         ChatRoomParticipant.objects.get(
-    #             employee=employee, chat_room=chat_room, left_at__isnull=True
-    #         )
-    #     except ChatRoomParticipant.DoesNotExist:
-    #         ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room)
-    #     except ChatRoomParticipant.MultipleObjectsReturned:
-    #         participants = ChatRoomParticipant.objects.filter(
-    #             employee=employee, chat_room=chat_room, left_at__isnull=True
-    #         )
-    #         participants.exclude(pk=participants.first().pk).delete()
-    #     return Response(status=status.HTTP_200_OK)
-
     @action(detail=False, methods=["post"])
     def create_or_get_chat_room(self, request, *args, **kwargs):
         participants_ids = request.data.get("participants", [])
