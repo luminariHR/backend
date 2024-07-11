@@ -75,7 +75,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         return None
 
     @action(detail=True, methods=["post"])
-    def invite_user(self, request, pk=None, *args, **kwargs):
+    def invite(self, request, pk=None, *args, **kwargs):
         chat_room = self.get_object()
         chat_room_participants = ChatRoomParticipant.objects.filter(
             chat_room=chat_room
