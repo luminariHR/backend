@@ -32,7 +32,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         "is_head",
     ]
     is_hr_admin = serializers.BooleanField(write_only=False, required=False)
-    department = serializers.SerializerMethodField()
+    # department = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee

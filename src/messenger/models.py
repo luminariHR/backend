@@ -7,6 +7,7 @@ class ChatRoom(models.Model):
     participants = models.ManyToManyField(
         Employee, through="ChatRoomParticipant", related_name="chat_rooms"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -18,11 +19,8 @@ class ChatRoomParticipant(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
     left_at = models.DateTimeField(null=True, blank=True)
 
-    class Meta:
-        unique_together = ("employee", "chat_room")
-
     def __str__(self):
-        return f"{self.user.username} in {self.chat_room.name}"
+        return f"{self.employee.username} in {self.chat_room.name}"
 
 
 class Message(models.Model):

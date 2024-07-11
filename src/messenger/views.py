@@ -5,28 +5,86 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
+from collections import Counter
+from users.models import Employee
 
 
 class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
 
+    @action(detail=False, methods=["post"])
+    def create_or_get_chat_room(self, request, *args, **kwargs):
+        participants_ids = request.data.get("participants", [])
+        if not participants_ids:
+            return Response(
+                {"error": "Participants are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user_id = request.user.pk
+        if user_id not in participants_ids:
+            participants_ids.append(user_id)
+
+        if len(participants_ids) < 2:
+            return Response(
+                {"error": "At least two participants are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        chat_room = self._create_or_get_chat_room(participants_ids)
+        serializer = self.get_serializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def _create_or_get_chat_room(self, participants_ids):
+        existing_chat_room = self.chat_room_exists(participants_ids)
+        if existing_chat_room:
+            return existing_chat_room
+        new_chat_room = ChatRoom.objects.create(name=f"chatroom_{participants_ids}")
+        for participant_id in participants_ids:
+            ChatRoomParticipant.objects.create(
+                chat_room=new_chat_room, employee_id=participant_id
+            )
+        return new_chat_room
+
+    def chat_room_exists(self, participants_ids):
+        chat_rooms = ChatRoom.objects.all().order_by("-created_at")
+        for chat_room in chat_rooms:
+            chat_room_participants = ChatRoomParticipant.objects.filter(
+                chat_room=chat_room, left_at__isnull=True
+            ).values_list("employee_id", flat=True)
+            if Counter(chat_room_participants) == Counter(participants_ids):
+                return chat_room
+        return None
+
     @action(detail=True, methods=["post"])
-    def join(self, request, pk=None, *args, **kwargs):
+    def invite(self, request, pk=None, *args, **kwargs):
         chat_room = self.get_object()
-        employee = request.user
+        chat_room_participants = ChatRoomParticipant.objects.filter(
+            chat_room=chat_room
+        ).values_list("employee_id", flat=True)
+        user_id = request.data.get("user_id")
+        if not user_id:
+            return Response(
+                {"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
-            ChatRoomParticipant.objects.get(
-                employee=employee, chat_room=chat_room, left_at__isnull=True
+            Employee.objects.get(pk=user_id)
+        except Employee.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        except ChatRoomParticipant.DoesNotExist:
-            ChatRoomParticipant.objects.create(employee=employee, chat_room=chat_room)
-        except ChatRoomParticipant.MultipleObjectsReturned:
-            participants = ChatRoomParticipant.objects.filter(
-                employee=employee, chat_room=chat_room, left_at__isnull=True
+
+        if user_id in chat_room_participants:
+            return Response(
+                {"error": "User is already in the chat room"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            participants.exclude(pk=participants.first().pk).delete()
-        return Response(status=status.HTTP_200_OK)
+
+        ChatRoomParticipant.objects.create(chat_room=chat_room, employee_id=user_id)
+        serializer = self.get_serializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"])
     def leave(self, request, pk=None, *args, **kwargs):
