@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from collections import Counter
+from users.models import Employee
 
 
 class ChatRoomViewSet(viewsets.ModelViewSet):
@@ -64,7 +65,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         return new_chat_room
 
     def chat_room_exists(self, participants_ids):
-        chat_rooms = ChatRoom.objects.all()
+        chat_rooms = ChatRoom.objects.all().order_by("-created_at")
         for chat_room in chat_rooms:
             chat_room_participants = ChatRoomParticipant.objects.filter(
                 chat_room=chat_room, left_at__isnull=True
@@ -72,6 +73,36 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
             if Counter(chat_room_participants) == Counter(participants_ids):
                 return chat_room
         return None
+
+    @action(detail=True, methods=["post"])
+    def invite_user(self, request, pk=None, *args, **kwargs):
+        chat_room = self.get_object()
+        chat_room_participants = ChatRoomParticipant.objects.filter(
+            chat_room=chat_room
+        ).values_list("employee_id", flat=True)
+        print(chat_room_participants)
+        user_id = request.data.get("user_id")
+        if not user_id:
+            return Response(
+                {"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            Employee.objects.get(pk=user_id)
+        except Employee.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if user_id in chat_room_participants:
+            return Response(
+                {"error": "User is already in the chat room"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ChatRoomParticipant.objects.create(chat_room=chat_room, employee_id=user_id)
+        serializer = self.get_serializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"])
     def leave(self, request, pk=None, *args, **kwargs):
