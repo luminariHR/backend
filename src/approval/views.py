@@ -9,6 +9,8 @@ from .serializers import (
     AgendaSerializer,
     AgendaReviewSerializer,
 )
+from django.utils import timezone
+from django.db.models import Q
 
 
 class SentApprovalViewSet(viewsets.ModelViewSet):
@@ -95,9 +97,18 @@ class SentReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        today = timezone.now().date()
+        start_date = request.GET.get("start_date", today)
+        end_date = request.GET.get("end_date", today)
+
         drafter = request.user
-        agendas = Agenda.objects.filter(drafter=drafter)
+        agendas = Agenda.objects.filter(
+            drafter=drafter,
+            created_at__date__gte=start_date,
+            created_at__date__lte=end_date,
+        )
         response_serializer = AgendaSerializer(agendas, many=True)
+
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -106,9 +117,17 @@ class ReceivedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        today = timezone.now().date()
+        start_date = request.GET.get("start_date", today)
+        end_date = request.GET.get("end_date", today)
+
         reviewer = request.user
         agendas = (
-            Agenda.objects.filter(review_steps__reviewer=reviewer)
+            Agenda.objects.filter(
+                review_steps__reviewer=reviewer,
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date,
+            )
             .exclude(review_steps__status="standby")
             .distinct()
         )
@@ -121,7 +140,15 @@ class ReferencedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        today = timezone.now().date()
+        start_date = request.GET.get("start_date", today)
+        end_date = request.GET.get("end_date", today)
+
         referrer = request.user
-        agendas = Agenda.objects.filter(references__referrer=referrer).distinct()
+        agendas = Agenda.objects.filter(
+            references__referrer=referrer,
+            created_at__date__gte=start_date,
+            created_at__date__lte=end_date,
+        ).distinct()
         response_serializer = AgendaSerializer(agendas, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
