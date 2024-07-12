@@ -45,6 +45,7 @@ urlpatterns = [
     # 일정 관리
     re_path(r"api/(?P<version>(v1))/events/", include("events.urls")),
     re_path(r"api/(?P<version>(v1))/admin/events/", include("events.admin_urls")),
+    # 회원 관리
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
         r"api/(?P<version>(v1|v2))/token/",
