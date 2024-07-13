@@ -2,8 +2,8 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
-from .models import Employee
 from departments.models import Department
+from .models import Employee
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -45,6 +45,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "employee_id",
             "gender",
             "employment_status",
+            "profile_image",
             "job_title",
             "phone_number",
             "start_date",
@@ -57,16 +58,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         return user.groups.filter(name=settings.HR_ADMIN_GROUP_NAME).exists()
 
-    # def get_department(self, obj):
-    #     department_user = DepartmentUser.objects.filter(
-    #         employee=obj, is_current=True
-    #     ).first()
-    #     if department_user and department_user.department:
-    #         serializer_context = {"is_head": department_user.is_head}
-    #         return DepartmentSerializer(
-    #             obj.department, context=serializer_context
-    #         ).data
-    #     return None
+    def validate_profile_image(self, value):
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("프로필 사진은 5MB보다 작아야 합니다.")
 
     @staticmethod
     def add_or_remove_hr_admin_group(is_hr_admin, user):

@@ -3,6 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import BaseUserManager
+from PIL import Image
+
+
+def user_directory_path(instance, filename):
+    ext = filename.split(".")[-1]
+    return f"profile/user_{instance.id}/profile.{ext}"
 
 
 class EmployeeManager(BaseUserManager):
@@ -51,6 +57,9 @@ class Employee(AbstractUser):
     email = models.EmailField(verbose_name=_("email address"), unique=True)
     employee_id = models.CharField(max_length=50)
     gender = models.IntegerField(choices=GENDER_CHOICES, default=0)
+    profile_image = models.ImageField(
+        upload_to=user_directory_path, blank=True, null=True
+    )
     employment_status = models.IntegerField(
         default=0, choices=EMPLOYMENT_STATUS_CHOICES
     )
@@ -75,3 +84,23 @@ class Employee(AbstractUser):
     @property
     def name(self):
         return f"{self.last_name}{self.first_name}"
+
+    def resize_profile_image(self):
+        img = Image.open(self.profile_image.path)
+        max_size = (400, 400)
+        img.thumbnail(max_size, Image.LANCZOS)
+        img.save(self.profile_image.path)
+
+    def save(self, *args, **kwargs):
+        try:
+            employee = Employee.objects.get(id=self.id)
+            if (
+                employee.profile_image != self.profile_image
+                and employee.profile_image.name
+            ):
+                employee.profile_image.delete(save=False)
+        except Employee.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
+        if self.profile_image:
+            self.resize_profile_image()
