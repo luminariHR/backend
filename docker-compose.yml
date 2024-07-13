@@ -11,7 +11,6 @@ services:
     volumes:
       #- ./src:/app
       - static_volume:/app/static
-      - media_volume:/app/media
       - ./media:/app/media
     expose:
       - 8000
@@ -25,7 +24,6 @@ services:
       TZ: "Asia/Seoul"
     volumes:
       - static_volume:/app/static
-      - media_volume:/app/media
       - ./docker/nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
@@ -48,4 +46,3 @@ services:
 
 volumes:
   static_volume:
-  media_volume:
