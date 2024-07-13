@@ -1,5 +1,6 @@
 import jwt
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import AnonymousUser
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
@@ -31,3 +32,21 @@ class JWTAuthMiddleware(BaseMiddleware):
             scope["user"] = AnonymousUser()
 
         return await super().__call__(scope, receive, send)
+
+
+class ProtectedMediaMiddleware:
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        self.process_request(request)
+        response = self.get_response(request)
+        return response
+
+    def process_request(self, request):
+        if request.path.startswith(settings.MEDIA_URL):
+            if not request.user.is_authenticated:
+                raise PermissionDenied(
+                    "You do not have permission to access this file."
+                )
