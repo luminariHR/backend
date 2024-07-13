@@ -12,6 +12,7 @@ services:
       #- ./src:/app
       - static_volume:/app/static
       - media_volume:/app/media
+      - ./media:/app/media
     expose:
       - 8000
 
@@ -28,6 +29,7 @@ services:
       - ./docker/nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
+      - ./media:/app/media
     ports:
       - "80:80"
       - "443:443"
