@@ -4,6 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 from .models import Approval, Agenda
 from .serializers import (
     ApprovalSerializer,
@@ -74,6 +75,31 @@ class AgendaReviewRequestCreateView(APIView):
 class AgendaReviewView(APIView):
 
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, version, agenda_id):
+        context = {"request": request}
+
+        drafter = request.user
+        reviewer = request.user
+        referrer = request.user
+
+        agendas = Agenda.objects.filter(
+            Q(drafter=drafter)
+            | (
+                Q(review_steps__reviewer=reviewer)
+                & Q(review_steps__status__in=["approved", "rejected", "pending"])
+            )
+            | Q(references__referrer=referrer)
+        ).distinct()
+        try:
+            agenda = agendas.get(id=agenda_id)
+        except Agenda.DoesNotExist:
+            return Response(
+                {"message": "처리할 수 없는 결재입니다."},
+                status=404,
+            )
+        serializer = AgendaSerializer(agenda, context=context)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, version, agenda_id):
         context = {"request": request}
