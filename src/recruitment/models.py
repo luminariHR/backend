@@ -35,34 +35,6 @@ class EssayQuestion(models.Model):
     def __str__(self):
         return self.question_text
 
-    def create(self, validated_data):
-        questions_data = validated_data.pop("questions", [])
-        job_posting = JobPosting.objects.create(**validated_data)
-
-        for question_data in questions_data:
-            EssayQuestion.objects.create(job_posting=job_posting, **question_data)
-
-        return job_posting
-
-    def update(self, instance, validated_data):
-        questions_data = validated_data.pop("questions", [])
-        for question_data in questions_data:
-            question_id = question_data.get("id")
-            if question_id:
-                question = EssayQuestion.objects.get(
-                    id=question_id, job_posting=instance
-                )
-                for attr, value in question_data.items():
-                    setattr(question, attr, value)
-                question.save()
-            else:
-                EssayQuestion.objects.create(job_posting=instance, **question_data)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
-
 
 class EssayAnswer(models.Model):
     job_posting = models.ForeignKey(

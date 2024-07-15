@@ -23,6 +23,40 @@ class JobPostingSerializer(serializers.ModelSerializer):
     def get_applicants(self, obj):
         return list(obj.applicants())
 
+    def create(self, validated_data):
+        questions_data = validated_data.pop("questions", [])
+        job_posting = JobPosting.objects.create(**validated_data)
+
+        for question_data in questions_data:
+            EssayQuestion.objects.create(job_posting=job_posting, **question_data)
+
+        return job_posting
+
+    def update(self, instance, validated_data):
+        questions_data = validated_data.pop("questions", [])
+        existing_questions = {
+            question.id: question for question in instance.questions.all()
+        }
+
+        for question_data in questions_data:
+            question_id = question_data.get("id")
+            if question_id:
+                if question_id in existing_questions:
+                    question = existing_questions.pop(question_id)
+                    for attr, value in question_data.items():
+                        setattr(question, attr, value)
+                    question.save()
+            else:
+                EssayQuestion.objects.create(job_posting=instance, **question_data)
+
+        for question_id, question in existing_questions.items():
+            question.delete()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
 
 class EssayAnswerSerializer(serializers.ModelSerializer):
     class Meta:
