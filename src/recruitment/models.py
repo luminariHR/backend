@@ -29,13 +29,19 @@ class EssayAnswer(models.Model):
         EssayQuestion, related_name="answers", on_delete=models.CASCADE
     )
     applicant_name = models.CharField(max_length=255)
-    applicant_ssn = models.CharField(max_length=14)
+    applicant_email = models.EmailField(max_length=255)
+    applicant_phone_number = models.CharField(max_length=15)
     answer_text = models.TextField()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["job_posting", "applicant_name", "applicant_ssn"],
+                fields=[
+                    "job_posting",
+                    "applicant_name",
+                    "applicant_email",
+                    "applicant_phone_number",
+                ],
                 name="unique_applicant_application",
             )
         ]
