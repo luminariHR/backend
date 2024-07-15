@@ -18,9 +18,9 @@ from .views import (
 urlpatterns = [
     # path("", include(router.urls)),
     path("documents/", AgendaReviewRequestCreateView.as_view()),
-    path("documents/<str:agenda_id>/", AgendaReviewView.as_view()),
     path("documents/sent/", SentReviewRequestView.as_view()),
     path("documents/received/", ReceivedReviewRequestView.as_view()),
     path("documents/referenced/", ReferencedReviewRequestView.as_view()),
+    path("documents/<str:agenda_id>/", AgendaReviewView.as_view()),
     path("ocr/preview/", OCRView.as_view()),
 ]
