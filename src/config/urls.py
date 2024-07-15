@@ -61,6 +61,8 @@ urlpatterns = [
     re_path(r"api/(?P<version>(v1))/approval/", include("approval.urls")),
     # 메신저
     re_path(r"api/(?P<version>(v1|v2))/messenger/", include("messenger.urls")),
+    # 채용
+    re_path(r"api/(?P<version>(v1|v2))/recruitment/", include("recruitment.urls")),
 ]
 
 if settings.DEBUG:
