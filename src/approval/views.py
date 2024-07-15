@@ -13,7 +13,6 @@ from .serializers import (
     OCRSerializer,
 )
 from .ocr import ReceiptParser
-from django.utils import timezone
 
 
 class SentApprovalViewSet(viewsets.ModelViewSet):
@@ -64,7 +63,10 @@ class AgendaReviewRequestCreateView(APIView):
         )
         if serializer.is_valid():
             approval_request = serializer.save()
-            response_serializer = AgendaSerializer(approval_request)
+            response_serializer = AgendaSerializer(
+                approval_request,
+                context=context,
+            )
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -85,7 +87,7 @@ class AgendaReviewView(APIView):
         serializer = AgendaReviewSerializer(agenda, data=request.data, context=context)
         if serializer.is_valid():
             approval_request = serializer.save()
-            response_serializer = AgendaSerializer(approval_request)
+            response_serializer = AgendaSerializer(approval_request, context=context)
             return Response(
                 {
                     "message": "성공적으로 반영됐습니다.",
@@ -102,6 +104,7 @@ class SentReviewRequestView(APIView):
     def get(self, request, version):
         start_date = request.GET.get("start_date", None)
         end_date = request.GET.get("end_date", None)
+        context = {"request": request}
 
         drafter = request.user
         if start_date and end_date:
@@ -112,7 +115,7 @@ class SentReviewRequestView(APIView):
             )
         else:
             agendas = Agenda.objects.filter(drafter=drafter)
-        response_serializer = AgendaSerializer(agendas, many=True)
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
 
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
@@ -122,6 +125,7 @@ class ReceivedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        context = {"request": request}
         start_date = request.GET.get("start_date", None)
         end_date = request.GET.get("end_date", None)
 
@@ -135,7 +139,7 @@ class ReceivedReviewRequestView(APIView):
         else:
             agendas = Agenda.objects.filter(review_steps__reviewer=reviewer)
         agendas = agendas.exclude(review_steps__status="standby").distinct()
-        response_serializer = AgendaSerializer(agendas, many=True)
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -144,6 +148,7 @@ class ReferencedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        context = {"request": request}
         start_date = request.GET.get("start_date", None)
         end_date = request.GET.get("end_date", None)
 
@@ -156,7 +161,7 @@ class ReferencedReviewRequestView(APIView):
             ).distinct()
         else:
             agendas = Agenda.objects.filter(references__referrer=referrer).distinct()
-        response_serializer = AgendaSerializer(agendas, many=True)
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 

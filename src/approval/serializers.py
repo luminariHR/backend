@@ -78,12 +78,19 @@ class AgendaSerializer(serializers.ModelSerializer):
             "file",
         ]
 
+    def get_file_path(self, obj):
+        request = self.context.get("request")
+        if obj.file:
+            return request.build_absolute_uri(obj.file.url)
+
 
 class AgendaReviewRequestCreateSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
     content = serializers.CharField()
     file = serializers.FileField()
-    referrer_ids = serializers.ListField(child=serializers.IntegerField())
+    referrer_ids = serializers.ListField(
+        child=serializers.IntegerField(), default=[], allow_null=True
+    )
     reviewer_ids = serializers.ListField(child=serializers.IntegerField())
 
     def validate_referrer_ids(self, value):
