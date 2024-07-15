@@ -8,6 +8,7 @@ from .views import (
     SentReviewRequestView,
     ReceivedReviewRequestView,
     ReferencedReviewRequestView,
+    OCRView,
 )
 
 # router = DefaultRouter()
@@ -21,4 +22,5 @@ urlpatterns = [
     path("documents/sent/", SentReviewRequestView.as_view()),
     path("documents/received/", ReceivedReviewRequestView.as_view()),
     path("documents/referenced/", ReferencedReviewRequestView.as_view()),
+    path("ocr/preview/", OCRView.as_view()),
 ]

@@ -1,8 +1,12 @@
+import uuid
 from django.db import models
-from django.utils import timezone
 from users.models import Employee
 from departments.models import Department
 from core.models import AbstractBaseModel
+
+
+def agenda_document_directory_path(instance, filename):
+    return f"agenda/{instance.id}/{filename}"
 
 
 class Approval(AbstractBaseModel):
@@ -32,15 +36,26 @@ class Agenda(AbstractBaseModel):
         ("approved", "Approved"),
         ("rejected", "Rejected"),
     ]
+    AGENDA_TYPE_CHOICES = [
+        ("receipt", "Receipt"),
+        ("general", "General"),
+    ]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     content = models.TextField()
     drafter = models.ForeignKey(
         Employee, on_delete=models.CASCADE, related_name="agendas"
     )
+    agenda_type = models.CharField(
+        max_length=10, choices=AGENDA_TYPE_CHOICES, default="general"
+    )
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, related_name="agendas"
     )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    file = models.FileField(
+        upload_to=agenda_document_directory_path, null=True, blank=True
+    )
 
     def get_review_step_for_reviewer(self, reviewer_id):
         return self.review_steps.filter(reviewer_id=reviewer_id).first()
