@@ -25,7 +25,8 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
         answer_text = data.get("answer_text", "")
         question = data.get("question")
         applicant_name = data.get("applicant_name")
-        applicant_ssn = data.get("applicant_ssn")
+        applicant_email = data.get("applicant_email")
+        applicant_phone_number = data.get("applicant_phone_number")
         job_posting = data.get("job_posting")
 
         if question and len(answer_text) > question.max_length:
@@ -36,7 +37,8 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
         if EssayAnswer.objects.filter(
             job_posting=job_posting,
             applicant_name=applicant_name,
-            applicant_ssn=applicant_ssn,
+            applicant_email=applicant_email,
+            applicant_phone_number=applicant_phone_number,
         ).exists():
             raise serializers.ValidationError(
                 "You have already submitted answers for this job posting."
