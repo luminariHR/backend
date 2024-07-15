@@ -1,11 +1,14 @@
+import os
 import jwt
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import AnonymousUser
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from urllib.parse import parse_qs
+from approval.models import Agenda
 
 User = get_user_model()
 
@@ -50,3 +53,11 @@ class ProtectedMediaMiddleware:
                 raise PermissionDenied(
                     "You do not have permission to access this file."
                 )
+            if request.path.startswith(os.path.join(settings.MEDIA_URL, "agenda")):
+                user_id = request.user.id
+                if not Agenda.objects.filter(
+                    Q(drafter_id=user_id) | Q(review_steps_reviewer_id=user_id)
+                ).exists():
+                    raise PermissionDenied(
+                        "You do not have permission to access this file."
+                    )
