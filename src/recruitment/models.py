@@ -9,6 +9,21 @@ class JobPosting(models.Model):
     def __str__(self):
         return self.title
 
+    def number_of_applicants(self):
+        return (
+            EssayAnswer.objects.filter(job_posting=self)
+            .values("applicant_email")
+            .distinct()
+            .count()
+        )
+
+    def applicants(self):
+        return (
+            EssayAnswer.objects.filter(job_posting=self)
+            .values("applicant_name", "applicant_email", "applicant_phone_number")
+            .distinct()
+        )
+
 
 class EssayQuestion(models.Model):
     job_posting = models.ForeignKey(

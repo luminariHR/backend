@@ -10,10 +10,18 @@ class EssayQuestionSerializer(serializers.ModelSerializer):
 
 class JobPostingSerializer(serializers.ModelSerializer):
     questions = EssayQuestionSerializer(many=True, read_only=True)
+    number_of_applicants = serializers.SerializerMethodField()
+    applicants = serializers.SerializerMethodField()
 
     class Meta:
         model = JobPosting
         fields = "__all__"
+
+    def get_number_of_applicants(self, obj):
+        return obj.number_of_applicants()
+
+    def get_applicants(self, obj):
+        return list(obj.applicants())
 
 
 class EssayAnswerSerializer(serializers.ModelSerializer):
