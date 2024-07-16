@@ -87,7 +87,7 @@ class AgendaSerializer(serializers.ModelSerializer):
 class AgendaReviewRequestCreateSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
     content = serializers.CharField()
-    file = serializers.FileField(allow_null=True)
+    file = serializers.FileField(allow_null=True, required=False)
     referrer_ids = serializers.ListField(
         child=serializers.IntegerField(), default=[], allow_null=True
     )
