@@ -58,7 +58,6 @@ jobs:
           docker save luminari_nginx:latest -o luminari_nginx.tar
           docker save luminari_web:latest -o luminari_web.tar
           docker save luminari_certbot:latest -o luminari_certbot.tar
-          docker save luminari_redis:latest -o luminari_redis.tar
           docker save luminari_celery:latest -o luminari_celery.tar
 
       - name: Deploy to server
@@ -77,6 +76,5 @@ jobs:
                       sudo docker load -i /home/dev/luminari_nginx.tar &&
                       sudo docker load -i /home/dev/luminari_web.tar &&
                       sudo docker load -i /home/dev/luminari_certbot.tar &&
-                      sudo docker load -i /home/dev/luminari_redis.tar &&
                       sudo docker load -i /home/dev/luminari_celery.tar &&
                       sudo docker compose -f /home/dev/docker-compose.yml up -d"
