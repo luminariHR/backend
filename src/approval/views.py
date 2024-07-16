@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-from .models import Approval, Agenda
+from .models import Approval, Agenda, ReviewStep
 from .serializers import (
     ApprovalSerializer,
     AgendaReviewRequestCreateSerializer,
@@ -156,22 +156,17 @@ class ReceivedReviewRequestView(APIView):
         end_date = request.GET.get("end_date", None)
 
         reviewer = request.user
+        review_steps = ReviewStep.objects.filter(
+            reviewer=reviewer, status__in=["pending", "approved", "rejected"]
+        )
         if start_date and end_date:
-            agendas = (
-                Agenda.objects.filter(
-                    review_steps__reviewer=reviewer,
-                    created_at__date__gte=start_date,
-                    created_at__date__lte=end_date,
-                )
-                .exclude(review_steps__status="standby")
-                .distinct()
-            )
+            agendas = Agenda.objects.filter(
+                review_steps__in=review_steps,
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date,
+            ).distinct()
         else:
-            agendas = (
-                Agenda.objects.filter(review_steps__reviewer=reviewer)
-                .exclude(review_steps__status="standby")
-                .distinct()
-            )
+            agendas = Agenda.objects.filter(review_steps__in=review_steps).distinct()
         response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
