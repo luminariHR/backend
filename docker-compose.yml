@@ -9,7 +9,6 @@ services:
       dockerfile: docker/api/Dockerfile
     command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     volumes:
-      - .:/app
       - static_volume:/app/static
       - ./media:/app/media
     expose:
@@ -23,10 +22,15 @@ services:
       - "6379:6379"
 
   celery:
-    build: .
+    environment:
+      DJANGO_ENV: "development"
+      TZ: "Asia/Seoul"
+    image: luminari_celery:latest
+    build:
+      context: .
+      dockerfile: docker/celery/Dockerfile
     command: celery -A config worker --loglevel=info
     volumes:
-      - .:/app
     depends_on:
       - redis
       - web
