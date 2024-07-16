@@ -115,7 +115,7 @@ class AgendaReviewRequestCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         referrer_ids = validated_data.pop("referrer_ids")
         reviewer_ids = validated_data.pop("reviewer_ids")
-        file = validated_data.pop("file")
+        file = validated_data.pop("file", None)
         request = self.context["request"]
         drafter = request.user
 
