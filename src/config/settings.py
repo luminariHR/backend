@@ -123,30 +123,30 @@ MEDIA_URL = "/media/"
 # TODO: REDIS로 교체
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
-if DJANGO_ENV == "local":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST"),
-            "PORT": os.environ.get("DB_PORT"),
-        }
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
+}
+
+if DJANGO_ENV == "local":
+    CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+    CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST"),
-            "PORT": os.environ.get("DB_PORT"),
-        }
-    }
+    CELERY_BROKER_URL = "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND = "redis://redis:6379/0"
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
     STATIC_ROOT = os.path.join("/app/", "static")
     MEDIA_ROOT = os.path.join("/app/", "media")
@@ -211,3 +211,6 @@ SIMPLE_JWT = {
 
 # GLOBAL VARIABLES
 HR_ADMIN_GROUP_NAME = "HR 관리자"
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
