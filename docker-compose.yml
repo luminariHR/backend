@@ -30,7 +30,6 @@ services:
       context: .
       dockerfile: docker/celery/Dockerfile
     command: celery -A config worker --loglevel=info
-    volumes:
     depends_on:
       - redis
       - web
