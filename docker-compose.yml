@@ -9,11 +9,27 @@ services:
       dockerfile: docker/api/Dockerfile
     command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     volumes:
-      #- ./src:/app
+      - .:/app
       - static_volume:/app/static
       - ./media:/app/media
     expose:
       - 8000
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - web
 
   nginx:
     build:
