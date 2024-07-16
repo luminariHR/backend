@@ -15,10 +15,18 @@ dependencies = [
     "django-cors-headers>=4.4.0",
     "pillow>=10.4.0",
     "openai>=1.35.13",
-    "requests>=2.32.3",
     "langchain>=0.2.8",
     "langchain-postgres>=0.0.9",
     "django-extensions>=3.2.3",
+    "celery>=5.4.0",
+    "langchain-community>=0.2.7",
+    "django-celery-results>=2.5.1",
+    "redis>=5.0.7",
+    "pymupdf>=1.24.7",
+    "langchain-openai>=0.1.16",
+    "pgvector>=0.2.5",
+    "requests>=2.32.3",
+    "supabase>=2.5.2",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
