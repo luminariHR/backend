@@ -16,6 +16,9 @@ dependencies = [
     "pillow>=10.4.0",
     "openai>=1.35.13",
     "requests>=2.32.3",
+    "langchain>=0.2.8",
+    "langchain-postgres>=0.0.9",
+    "django-extensions>=3.2.3",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
