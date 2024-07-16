@@ -22,14 +22,16 @@ services:
       - "6379:6379"
 
   celery:
-    environment:
-      DJANGO_ENV: "development"
-      TZ: "Asia/Seoul"
-    image: luminari_celery:latest
     build:
       context: .
       dockerfile: docker/celery/Dockerfile
+    image: luminari_celery:latest
+    environment:
+      DJANGO_ENV: "development"
+      TZ: "Asia/Seoul"
     command: celery -A config worker --loglevel=info
+    volumes:
+      - ./media:/app/media
     depends_on:
       - redis
       - web
