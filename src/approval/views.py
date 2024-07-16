@@ -157,14 +157,21 @@ class ReceivedReviewRequestView(APIView):
 
         reviewer = request.user
         if start_date and end_date:
-            agendas = Agenda.objects.filter(
-                review_steps__reviewer=reviewer,
-                created_at__date__gte=start_date,
-                created_at__date__lte=end_date,
+            agendas = (
+                Agenda.objects.filter(
+                    review_steps__reviewer=reviewer,
+                    created_at__date__gte=start_date,
+                    created_at__date__lte=end_date,
+                )
+                .exclude(review_steps__status="standby")
+                .distinct()
             )
         else:
-            agendas = Agenda.objects.filter(review_steps__reviewer=reviewer)
-        agendas = agendas.exclude(review_steps__status="standby").distinct()
+            agendas = (
+                Agenda.objects.filter(review_steps__reviewer=reviewer)
+                .exclude(review_steps__status="standby")
+                .distinct()
+            )
         response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
