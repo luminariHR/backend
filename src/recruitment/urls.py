@@ -19,4 +19,9 @@ urlpatterns = [
         ApplicantEssayAnswersView.as_view(),
         name="applicant_essays",
     ),
+    path(
+        "answers/<int:posting_id>",
+        AnswerView.as_view(),
+        name="posting_answer",
+    ),
 ]

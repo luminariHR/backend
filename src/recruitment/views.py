@@ -25,6 +25,29 @@ class EssayAnswerViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
 
+class AnswerView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, posting_id, *args, **kwargs):
+        try:
+            job_posting = JobPosting.objects.get(id=posting_id)
+        except JobPosting.DoesNotExist:
+            return Response(
+                {"error": "JobPosting not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = JobPostingSerializer(job_posting)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, posting_id, *args, **kwargs):
+        data = request.data.copy()
+        data["posting_id"] = posting_id
+        serializer = EssayAnswerSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class JobPostingApplicantsView(APIView):
     permission_classes = [IsHRAdmin]
 

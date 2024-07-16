@@ -59,31 +59,78 @@ class JobPostingSerializer(serializers.ModelSerializer):
 
 
 class EssayAnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EssayAnswer
-        fields = "__all__"
+    posting_id = serializers.IntegerField()
+    applicant_name = serializers.CharField(max_length=255)
+    applicant_email = serializers.EmailField(max_length=255)
+    applicant_phone_number = serializers.CharField(max_length=15)
+    answers = serializers.ListField(
+        child=serializers.DictField(child=serializers.CharField())
+    )
 
     def validate(self, data):
-        answer_text = data.get("answer_text", "")
-        question = data.get("question")
-        applicant_name = data.get("applicant_name")
-        applicant_email = data.get("applicant_email")
-        applicant_phone_number = data.get("applicant_phone_number")
-        job_posting = data.get("job_posting")
+        posting_id = data.get("posting_id")
+        job_posting = JobPosting.objects.filter(id=posting_id)
 
-        if question and len(answer_text) > question.max_length:
+        if not job_posting:
             raise serializers.ValidationError(
-                f"Answer exceeds the maximum length of {question.max_length} characters for this question."
+                f"Job Posting with ID {posting_id} does not exist."
             )
 
+        for answer in data["answers"]:
+            question_id = answer.get("question_id")
+            if not question_id:
+                raise serializers.ValidationError(
+                    "Each answer must include a question_id."
+                )
+            question = EssayQuestion.objects.filter(
+                id=question_id, job_posting=job_posting
+            )
+            if not question:
+                raise serializers.ValidationError(
+                    f"Question with ID {question_id} does not exist."
+                )
+            answer_text = answer.get("answer_text", "")
+            if len(answer_text) > question.max_length:
+                raise serializers.ValidationError(
+                    f"Answer for question ID {question_id} exceeds the maximum length of {question.max_length} characters."
+                )
+            if not answer_text:
+                raise serializers.ValidationError(
+                    "You have to answer all the questions"
+                )
         if EssayAnswer.objects.filter(
-            job_posting=job_posting,
-            applicant_name=applicant_name,
-            applicant_email=applicant_email,
-            applicant_phone_number=applicant_phone_number,
+            posting_id=posting_id,
+            applicant_name=data["applicant_name"],
+            applicant_email=data["applicant_email"],
+            applicant_phone_number=data["applicant_phone_number"],
         ).exists():
             raise serializers.ValidationError(
                 "You have already submitted answers for this job posting."
             )
 
         return data
+
+    def create(self, validated_data):
+        posting_id = validated_data.get("posting_id")
+        job_posting = JobPosting.objects.get(id=posting_id)
+        applicant_name = validated_data.get("applicant_name")
+        applicant_email = validated_data.get("applicant_email")
+        applicant_phone_number = validated_data.get("applicant_phone_number")
+
+        answers = validated_data.get("answers", [])
+
+        for answer_data in answers:
+            question_id = answer_data.get("question_id")
+            answer_text = answer_data.get("answer_text")
+            question = EssayQuestion.objects.get(id=question_id)
+
+            EssayAnswer.objects.create(
+                job_posting=job_posting,
+                question=question,
+                applicant_name=applicant_name,
+                applicant_email=applicant_email,
+                applicant_phone_number=applicant_phone_number,
+                answer_text=answer_text,
+            )
+
+        return validated_data
