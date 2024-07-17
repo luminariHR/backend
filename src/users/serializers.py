@@ -38,6 +38,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         "is_head",
     ]
     is_hr_admin = serializers.BooleanField(write_only=False, required=False)
+    is_department_head = serializers.SerializerMethodField(read_only=True)
     department = DepartmentSerializer()
 
     class Meta:
@@ -58,6 +59,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "end_date",
             "is_hr_admin",
             "department",
+            "is_department_head",
             "skills",
             "certifications",
             "projects",
@@ -65,6 +67,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "mbti",
             "hobbies",
         ]
+
+    def get_is_department_head(self, instance):
+        if instance.department:
+            return instance.department.head == instance
+        return False
 
     def is_user_hr_admin(self):
         user = self.context["request"].user
