@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 class JobPosting(models.Model):
@@ -63,3 +64,16 @@ class EssayAnswer(models.Model):
 
     def __str__(self):
         return f"{self.applicant_name} - {self.question.question_text}"
+
+
+class Summary(models.Model):
+    job_posting = models.OneToOneField(
+        JobPosting, on_delete=models.CASCADE, related_name="summary"
+    )
+    summarys = models.JSONField(default=list)
+    techs = ArrayField(models.CharField(max_length=255), blank=True, default=list)
+    jobs = ArrayField(models.CharField(max_length=255), blank=True, default=list)
+    questions = models.JSONField(default=list)
+
+    def __str__(self):
+        return f"Summary for {self.job_posting.title}"

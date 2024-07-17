@@ -134,3 +134,9 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
             )
 
         return validated_data
+
+
+class SummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Summary
+        fields = ["job_posting", "summary", "techs", "jobs", "questions"]
