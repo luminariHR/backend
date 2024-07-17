@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     "approval",
     "messenger",
     "corsheaders",
+    "django_extensions",
+    "recruiment",
 ]
 
 MIDDLEWARE = [

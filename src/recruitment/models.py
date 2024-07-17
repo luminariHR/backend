@@ -67,13 +67,23 @@ class EssayAnswer(models.Model):
 
 
 class Summary(models.Model):
-    job_posting = models.OneToOneField(
+    job_posting = models.ForeignKey(
         JobPosting, on_delete=models.CASCADE, related_name="summary"
     )
+    applicant_name = models.CharField(max_length=255)
+    applicant_email = models.EmailField(max_length=255)
     summarys = models.JSONField(default=list)
     techs = ArrayField(models.CharField(max_length=255), blank=True, default=list)
     jobs = ArrayField(models.CharField(max_length=255), blank=True, default=list)
     questions = models.JSONField(default=list)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["job_posting", "applicant_name", "applicant_email"],
+                name="unique_summary_per_applicant_per_job",
+            )
+        ]
+
     def __str__(self):
-        return f"Summary for {self.job_posting.title}"
+        return f"Summary for {self.job_posting.title} by {self.applicant_name}"

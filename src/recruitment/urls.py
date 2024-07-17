@@ -6,6 +6,7 @@ router = DefaultRouter()
 router.register(r"postings", JobPostingViewSet)
 router.register(r"questions", EssayQuestionViewSet)
 router.register(r"answers", EssayAnswerViewSet)
+router.register(r"summaries", SummaryViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

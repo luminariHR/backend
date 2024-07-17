@@ -39,6 +39,7 @@ djangorestframework==3.15.2
 djangorestframework-simplejwt[crypto]==5.3.1
 filelock==3.15.4
 frozenlist==1.4.1
+fsspec==2024.6.1
 gotrue==2.5.5
 greenlet==3.0.3; (platform_machine == "win32" or platform_machine == "WIN32" or platform_machine == "AMD64" or platform_machine == "amd64" or platform_machine == "x86_64" or platform_machine == "ppc64le" or platform_machine == "aarch64") and python_version < "3.13"
 h11==0.14.0
@@ -46,6 +47,7 @@ h2==4.1.0
 hpack==4.0.0
 httpcore==1.0.5
 httpx[http2]==0.27.0
+huggingface-hub==0.23.5
 hyperframe==6.0.1
 hyperlink==21.0.0
 identify==2.5.36
@@ -69,6 +71,7 @@ numpy==1.26.4
 openai==1.35.13
 orjson==3.10.6
 packaging==24.1
+pandas==2.2.2
 pathspec==0.12.1
 pgvector==0.2.5
 pillow==10.4.0
@@ -90,11 +93,13 @@ pymupdfb==1.24.6
 pyopenssl==24.1.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+pytz==2024.1
 pyyaml==6.0.1
 realtime==1.0.6
 redis==5.0.7
 regex==2024.5.15
 requests==2.32.3
+safetensors==0.4.3
 service-identity==24.1.0
 setuptools==70.1.1
 six==1.16.0
@@ -107,7 +112,9 @@ supabase==2.5.2
 supafunc==0.4.7
 tenacity==8.5.0
 tiktoken==0.7.0
+tokenizers==0.19.1
 tqdm==4.66.4
+transformers==4.42.4
 twisted-iocpsupport==1.0.4; platform_system == "Windows"
 twisted[tls]==24.3.0
 txaio==23.1.1

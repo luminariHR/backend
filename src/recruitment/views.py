@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from core.permissions import IsHRAdmin
 from .models import *
 from .serializers import *
+from .tasks import summarize
 
 
 class JobPostingViewSet(viewsets.ModelViewSet):
@@ -41,9 +42,12 @@ class AnswerView(APIView):
     def post(self, request, posting_id, *args, **kwargs):
         data = request.data.copy()
         data["posting_id"] = posting_id
+        applicant_name = data["applicant_name"]
+        applicant_email = data["applicant_email"]
         serializer = EssayAnswerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            summarize.delay(posting_id, applicant_name, applicant_email)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -90,4 +94,27 @@ class ApplicantEssayAnswersView(APIView):
             )
 
         serializer = EssayAnswerSerializer(answers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SummaryViewSet(viewsets.ModelViewSet):
+    queryset = Summary.objects.all()
+    serializer_class = SummarySerializer
+
+    def list(self, request, *args, **kwargs):
+        posting_id = request.query_params.get("posting_id")
+        applicant_email = request.query_params.get("applicant_email")
+
+        if posting_id and applicant_email:
+            summary = Summary.objects.filter(
+                job_posting__id=posting_id, applicant_email=applicant_email
+            )
+            if not summary.exists():
+                return Response({"error": "Summary not found."}, status=404)
+        else:
+            return Response(
+                {"error": "posting_id and applicant_email are required."}, status=400
+            )
+
+        serializer = self.get_serializer(summary)
         return Response(serializer.data, status=status.HTTP_200_OK)
