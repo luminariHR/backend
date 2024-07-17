@@ -6,8 +6,8 @@ from django.db.models import Q
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from .models import Attendance
-from .serializers import AttendanceSerializer
-from core.permissions import IsSelfAttendance
+from .serializers import AttendanceSerializer, AdminAttendanceSerializer
+from core.permissions import IsSelfAttendance, IsHRAdmin
 
 
 # 일반 회원 View
@@ -124,6 +124,51 @@ class AttendanceUpdateView(APIView):
             data["clock_out_note"] = request.data.get("clock_out_note")
         serializer = AttendanceSerializer(
             attendance, data=data, partial=True, context=context
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "성공적으로 수정됐습니다.", "data": serializer.data}
+            )
+        return Response({"errors": serializer.errors}, status=400)
+
+
+# HR 어드민 View
+class AdminAttendanceView(APIView):
+
+    permission_classes = [IsHRAdmin]
+
+    def get(self, request, version, user_id):
+        context = {"request": request}
+        # 'start_date', 'end_date' 없으면 오늘로 설정
+        today = timezone.now().date()
+        start_date = request.GET.get("start_date", today)
+        end_date = request.GET.get("end_date", today)
+        attendance = Attendance.objects.filter(
+            Q(date__gte=start_date) & Q(date__lte=end_date) & Q(employee_id=user_id)
+        )
+        serializer = AttendanceSerializer(attendance, context=context, many=True)
+        response_data = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "total_hours": 0,
+            "data": serializer.data,
+        }
+        for att in serializer.data:
+            if att["hours_worked"]:
+                response_data["total_hours"] += att["hours_worked"]
+        return Response(response_data)
+
+
+class AdminAttendanceUpdateView(APIView):
+
+    permission_classes = [IsHRAdmin]
+
+    def patch(self, request, version, attendance_id):
+        context = {"request": request}
+        attendance = get_object_or_404(Attendance, id=attendance_id)
+        serializer = AdminAttendanceSerializer(
+            attendance, data=request.data, partial=True, context=context
         )
         if serializer.is_valid():
             serializer.save()

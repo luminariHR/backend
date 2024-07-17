@@ -41,4 +41,38 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class AdminAttendanceSerializer(serializers.ModelSerializer):
-    pass
+
+    hours_worked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attendance
+        fields = "__all__"
+        read_only_fields = [
+            "employee",
+            "date",
+            "is_late",
+            "is_early_leave",
+            "is_excused",
+            "hours_worked",
+            "overtime",
+            "hr_note",
+        ]
+
+    def update(self, instance, validated_data):
+        data = {}
+        if "clock_in" in validated_data:
+            data["clock_in"] = validated_data.get("clock_in")
+        if "clock_out" in validated_data:
+            data["clock_out"] = validated_data.get("clock_out")
+        if "clock_in_note" in validated_data:
+            data["clock_in_note"] = validated_data.get("clock_in_note")
+        if "clock_out_note" in validated_data:
+            data["clock_out_note"] = validated_data.get("clock_out_note")
+        if "is_excused" in validated_data:
+            data["is_excused"] = validated_data.get("is_excused")
+        if "hr_note" in validated_data:
+            data["hr_note"] = validated_data.get("hr_note")
+        return super().update(instance, data)
+
+    def get_hours_worked(self, obj):
+        return obj.get_hours_worked()
