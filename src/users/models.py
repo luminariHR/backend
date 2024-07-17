@@ -74,7 +74,11 @@ class Employee(AbstractUser):
         null=True,
         blank=True,
     )
-
+    skills = models.JSONField(default=list, null=True, blank=True)
+    certifications = models.JSONField(default=list, null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
+    mbti = models.CharField(max_length=4, null=True, blank=True)
+    hobbies = models.JSONField(default=list, null=True, blank=True)
     # Auth
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -104,3 +108,13 @@ class Employee(AbstractUser):
         super().save(*args, **kwargs)
         if self.profile_image:
             self.resize_profile_image()
+
+
+class Project(models.Model):
+    title = models.CharField(max_length=100)
+    role = models.CharField(max_length=50)
+    duration = models.CharField(max_length=50)
+    description = models.TextField()
+    employee = models.ForeignKey(
+        Employee, related_name="projects", on_delete=models.CASCADE
+    )

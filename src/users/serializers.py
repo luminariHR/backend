@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
 from departments.models import Department
-from .models import Employee
+from .models import Employee, Project
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -18,6 +18,12 @@ class DepartmentSerializer(serializers.ModelSerializer):
         if "is_head" in self.context:
             ret["is_head"] = self.context["is_head"]
         return ret
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ["title", "role", "duration", "description"]
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -52,6 +58,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "end_date",
             "is_hr_admin",
             "department",
+            "skills",
+            "certifications",
+            "projects",
+            "location",
+            "mbti",
+            "hobbies",
         ]
 
     def is_user_hr_admin(self):
