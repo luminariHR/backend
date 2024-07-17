@@ -9,10 +9,32 @@ services:
       dockerfile: docker/api/Dockerfile
     command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
     volumes:
-      #- ./src:/app
       - static_volume:/app/static
+      - ./media:/app/media
     expose:
       - 8000
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/celery/Dockerfile
+    image: luminari_celery:latest
+    environment:
+      DJANGO_ENV: "development"
+      TZ: "Asia/Seoul"
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - ./media:/app/media
+    depends_on:
+      - redis
+      - web
 
   nginx:
     build:
@@ -26,6 +48,7 @@ services:
       - ./docker/nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
+      - ./media:/app/media
     ports:
       - "80:80"
       - "443:443"

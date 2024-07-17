@@ -1,9 +1,16 @@
 from rest_framework import serializers
-from .models import Message
+from .models import ChatbotMessage, ChatbotDocument
 
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Message
-        fields = ["id", "post", "datetime", "question", "answer"]
-        read_only_fields = ["post", "datetime", "answer"]
+        model = ChatbotMessage
+        fields = "__all__"
+        read_only_fields = ["author", "created_at", "updated_at", "answer"]
+
+
+class ChatbotDocumentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ChatbotDocument
+        fields = ["id", "name", "description", "file", "category"]

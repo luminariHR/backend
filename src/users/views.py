@@ -1,8 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .serializers import EmployeeSerializer
 from .models import Employee
-from rest_framework.permissions import IsAuthenticated
 from core.permissions import IsHRAdmin, IsHRAdminOrSelf
 
 
@@ -25,3 +27,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+
+class MyProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, version):
+        context = {"request": request}
+        # 본인 프로필
+        user_id = request.user.id
+        employee = Employee.objects.get(id=user_id)
+        serializer = EmployeeSerializer(employee, context=context)
+        return Response(serializer.data, status=200)

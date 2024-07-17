@@ -45,6 +45,7 @@ urlpatterns = [
     # 일정 관리
     re_path(r"api/(?P<version>(v1))/events/", include("events.urls")),
     re_path(r"api/(?P<version>(v1))/admin/events/", include("events.admin_urls")),
+    # 회원 관리
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
         r"api/(?P<version>(v1|v2))/token/",
@@ -57,8 +58,10 @@ urlpatterns = [
         name="token_refresh",
     ),
     # 전자결재
-    re_path(r"api/(?P<version>(v1))/chatbot/", include("chatbot.urls")),
     re_path(r"api/(?P<version>(v1))/approval/", include("approval.urls")),
+    # 챗봇
+    re_path(r"api/(?P<version>(v1))/chatbot/", include("chatbot.urls")),
+    re_path(r"api/(?P<version>(v1))/admin/chatbot/", include("chatbot.admin_urls")),
     # 메신저
     re_path(r"api/(?P<version>(v1|v2))/messenger/", include("messenger.urls")),
     # 채용

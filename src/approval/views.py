@@ -1,14 +1,19 @@
+import io
+from PIL import Image
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Approval, Agenda
+from django.db.models import Q
+from .models import Approval, Agenda, ReviewStep
 from .serializers import (
     ApprovalSerializer,
     AgendaReviewRequestCreateSerializer,
     AgendaSerializer,
     AgendaReviewSerializer,
+    OCRSerializer,
 )
+from .ocr import ReceiptParser
 
 
 class SentApprovalViewSet(viewsets.ModelViewSet):
@@ -59,7 +64,10 @@ class AgendaReviewRequestCreateView(APIView):
         )
         if serializer.is_valid():
             approval_request = serializer.save()
-            response_serializer = AgendaSerializer(approval_request)
+            response_serializer = AgendaSerializer(
+                approval_request,
+                context=context,
+            )
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -67,6 +75,31 @@ class AgendaReviewRequestCreateView(APIView):
 class AgendaReviewView(APIView):
 
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, version, agenda_id):
+        context = {"request": request}
+
+        drafter = request.user
+        reviewer = request.user
+        referrer = request.user
+
+        agendas = Agenda.objects.filter(
+            Q(drafter=drafter)
+            | (
+                Q(review_steps__reviewer=reviewer)
+                & Q(review_steps__status__in=["approved", "rejected", "pending"])
+            )
+            | Q(references__referrer=referrer)
+        ).distinct()
+        try:
+            agenda = agendas.get(id=agenda_id)
+        except Agenda.DoesNotExist:
+            return Response(
+                {"message": "처리할 수 없는 결재입니다."},
+                status=404,
+            )
+        serializer = AgendaSerializer(agenda, context=context)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, version, agenda_id):
         context = {"request": request}
@@ -80,7 +113,7 @@ class AgendaReviewView(APIView):
         serializer = AgendaReviewSerializer(agenda, data=request.data, context=context)
         if serializer.is_valid():
             approval_request = serializer.save()
-            response_serializer = AgendaSerializer(approval_request)
+            response_serializer = AgendaSerializer(approval_request, context=context)
             return Response(
                 {
                     "message": "성공적으로 반영됐습니다.",
@@ -95,9 +128,21 @@ class SentReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+        context = {"request": request}
+
         drafter = request.user
-        agendas = Agenda.objects.filter(drafter=drafter)
-        response_serializer = AgendaSerializer(agendas, many=True)
+        if start_date and end_date:
+            agendas = Agenda.objects.filter(
+                drafter=drafter,
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date,
+            )
+        else:
+            agendas = Agenda.objects.filter(drafter=drafter)
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
+
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -106,13 +151,23 @@ class ReceivedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        context = {"request": request}
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+
         reviewer = request.user
-        agendas = (
-            Agenda.objects.filter(review_steps__reviewer=reviewer)
-            .exclude(review_steps__status="standby")
-            .distinct()
+        review_steps = ReviewStep.objects.filter(
+            reviewer=reviewer, status__in=["pending", "approved", "rejected"]
         )
-        response_serializer = AgendaSerializer(agendas, many=True)
+        if start_date and end_date:
+            agendas = Agenda.objects.filter(
+                review_steps__in=review_steps,
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date,
+            ).distinct()
+        else:
+            agendas = Agenda.objects.filter(review_steps__in=review_steps).distinct()
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -121,7 +176,39 @@ class ReferencedReviewRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, version):
+        context = {"request": request}
+        start_date = request.GET.get("start_date", None)
+        end_date = request.GET.get("end_date", None)
+
         referrer = request.user
-        agendas = Agenda.objects.filter(references__referrer=referrer).distinct()
-        response_serializer = AgendaSerializer(agendas, many=True)
+        if start_date and end_date:
+            agendas = Agenda.objects.filter(
+                references__referrer=referrer,
+                created_at__date__gte=start_date,
+                created_at__date__lte=end_date,
+            ).distinct()
+        else:
+            agendas = Agenda.objects.filter(references__referrer=referrer).distinct()
+        response_serializer = AgendaSerializer(agendas, context=context, many=True)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class OCRView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = OCRSerializer(data=request.data)
+        if serializer.is_valid():
+            file = serializer.validated_data["image"]
+            try:
+                image = Image.open(io.BytesIO(file.read()))
+                parser = ReceiptParser(image)
+                response = parser.parse()
+                return Response({"preview": response}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(
+                    {"status": "error", "message": str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

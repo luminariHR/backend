@@ -1,9 +1,11 @@
+import uuid
 from rest_framework import serializers
 from users.models import Employee
 from departments.models import Department
 from notifications.utils import send_notification
 from django.db import transaction
 from .models import Approval, Agenda, ReviewStep, Reference
+from .validators import validate_file_size
 
 
 class ApprovalSerializer(serializers.ModelSerializer):
@@ -73,13 +75,22 @@ class AgendaSerializer(serializers.ModelSerializer):
             "status",
             "review_steps",
             "references",
+            "file",
         ]
+
+    def get_file_path(self, obj):
+        request = self.context.get("request")
+        if obj.file:
+            return request.build_absolute_uri(obj.file.url)
 
 
 class AgendaReviewRequestCreateSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=255)
     content = serializers.CharField()
-    referrer_ids = serializers.ListField(child=serializers.IntegerField())
+    file = serializers.FileField(allow_null=True, required=False)
+    referrer_ids = serializers.ListField(
+        child=serializers.IntegerField(), default=[], allow_null=True
+    )
     reviewer_ids = serializers.ListField(child=serializers.IntegerField())
 
     def validate_referrer_ids(self, value):
@@ -104,16 +115,19 @@ class AgendaReviewRequestCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         referrer_ids = validated_data.pop("referrer_ids")
         reviewer_ids = validated_data.pop("reviewer_ids")
+        file = validated_data.pop("file", None)
         request = self.context["request"]
         drafter = request.user
 
         # 생성된 결재 요청
         agenda = Agenda.objects.create(
+            id=str(uuid.uuid4()),
             title=validated_data["title"],
             content=validated_data["content"],
             drafter=drafter,
             department=drafter.department,
             status="pending",
+            file=file,
         )
 
         # 결재 단계 생성
@@ -169,3 +183,7 @@ class AgendaReviewSerializer(serializers.Serializer):
         review_step.status = status
         review_step.save()
         return instance
+
+
+class OCRSerializer(serializers.Serializer):
+    image = serializers.ImageField(validators=[validate_file_size])
