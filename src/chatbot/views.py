@@ -23,6 +23,17 @@ class MessageViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return ChatbotMessage.objects.filter(author=user)
 
+    def filter_queryset(self, queryset):
+        filter_value = self.request.query_params.get("category", None)
+        if filter_value is not None:
+            queryset = queryset.filter(category=filter_value)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
