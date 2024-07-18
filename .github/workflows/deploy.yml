@@ -47,6 +47,8 @@ jobs:
               echo 'OPENAI_API_KEY = "${{ secrets.DEV_OPENAI_API_KEY }}"'
               echo 'SUPABASE_URL = "${{ secrets.DEV_SUPABASE_URL }}"'
               echo 'SUPABASE_KEY = "${{ secrets.DEV_SUPABASE_KEY }}"'
+              echo 'EMAIL_HOST_USER = "${{ secrets.DEV_EMAIL_HOST_USER }}"'
+              echo 'EMAIL_HOST_PASSWORD = "${{ secrets.DEV_EMAIL_HOST_PASSWORD }}"'
           } > .env.dev
 
       - name: Build and push Docker images
