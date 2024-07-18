@@ -21,10 +21,10 @@ def summarize(posting_id, applicant_name, applicant_email):
         summarys = []
 
         for text in content:
-            summ_text = summary_model(text["asnwer"])
+            summ_text = summary_model(text["answer"])
             summarys.append(
                 {
-                    "qeustion": text["question"],
+                    "question": text["question"],
                     "summary": summ_text[0]["summary_text"],
                 }
             )
@@ -33,7 +33,8 @@ def summarize(posting_id, applicant_name, applicant_email):
         questions = []
 
         for question_id, details in spell_result.items():
-            spelled_text = display_colored_text(details["words"])
+            print(details)
+            spelled_text = display_colored_text(details)
             question = EssayQuestion.objects.get(id=question_id)
             questions.append(
                 {
