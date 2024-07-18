@@ -1,6 +1,6 @@
 from celery import shared_task
 from .models import *
-from summarization import *
+from .summarization import *
 
 
 @shared_task

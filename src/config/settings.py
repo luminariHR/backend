@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "messenger",
     "corsheaders",
     "django_extensions",
-    "recruiment",
+    "recruitment",
 ]
 
 MIDDLEWARE = [
