@@ -1,9 +1,43 @@
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.db import transaction
+from django.utils.crypto import get_random_string
 from rest_framework import serializers
 from departments.models import Department
 from .models import Employee, Project
+
+
+class UserInviteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employee
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(UserInviteSerializer, self).__init__(*args, **kwargs)
+        # Exclude the password field
+        self.fields.pop("password")
+
+    def validate(self, data):
+        filtered_data = {}
+        required_fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "employee_id",
+            "gender",
+            "employment_status",
+            "job_title",
+            "phone_number",
+            "start_date",
+        ]
+        for field in required_fields:
+            if field not in data:
+                raise serializers.ValidationError(
+                    {field: f"{field}는 필수 필드입니다."}
+                )
+            filtered_data[field] = data[field]
+        return filtered_data
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
