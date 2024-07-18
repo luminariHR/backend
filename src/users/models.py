@@ -111,10 +111,10 @@ class Employee(AbstractUser):
 
 
 class Project(models.Model):
-    title = models.CharField(max_length=100)
-    role = models.CharField(max_length=50)
-    duration = models.CharField(max_length=50)
-    description = models.TextField()
+    title = models.CharField(max_length=100, null=True)
+    role = models.CharField(max_length=50, null=True)
+    duration = models.CharField(max_length=50, null=True)
+    description = models.TextField(null=True)
     employee = models.ForeignKey(
         Employee, related_name="projects", on_delete=models.CASCADE
     )
