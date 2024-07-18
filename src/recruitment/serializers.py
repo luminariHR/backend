@@ -3,13 +3,17 @@ from .models import *
 
 
 class EssayQuestionSerializer(serializers.ModelSerializer):
+    job_posting = serializers.PrimaryKeyRelatedField(
+        queryset=JobPosting.objects.all(), required=False
+    )
+
     class Meta:
         model = EssayQuestion
-        fields = "__all__"
+        fields = ["id", "job_posting", "question_text", "max_length"]
 
 
 class JobPostingSerializer(serializers.ModelSerializer):
-    questions = EssayQuestionSerializer(many=True, read_only=True)
+    questions = EssayQuestionSerializer(many=True, required=False)
     number_of_applicants = serializers.SerializerMethodField()
     applicants = serializers.SerializerMethodField()
 
@@ -59,17 +63,27 @@ class JobPostingSerializer(serializers.ModelSerializer):
 
 
 class EssayAnswerSerializer(serializers.ModelSerializer):
-    posting_id = serializers.IntegerField()
-    applicant_name = serializers.CharField(max_length=255)
-    applicant_email = serializers.EmailField(max_length=255)
-    applicant_phone_number = serializers.CharField(max_length=15)
+    posting_id = serializers.IntegerField(write_only=True)
+    applicant_name = serializers.CharField(max_length=255, write_only=True)
+    applicant_email = serializers.EmailField(max_length=255, write_only=True)
+    applicant_phone_number = serializers.CharField(max_length=15, write_only=True)
     answers = serializers.ListField(
         child=serializers.DictField(child=serializers.CharField())
     )
 
+    class Meta:
+        model = EssayAnswer
+        fields = [
+            "posting_id",
+            "applicant_name",
+            "applicant_email",
+            "applicant_phone_number",
+            "answers",
+        ]
+
     def validate(self, data):
         posting_id = data.get("posting_id")
-        job_posting = JobPosting.objects.filter(id=posting_id)
+        job_posting = JobPosting.objects.get(id=posting_id)
 
         if not job_posting:
             raise serializers.ValidationError(
@@ -83,8 +97,8 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
                     "Each answer must include a question_id."
                 )
             question = EssayQuestion.objects.filter(
-                id=question_id, job_posting=job_posting
-            )
+                id=question_id, job_posting_id=posting_id
+            ).first()
             if not question:
                 raise serializers.ValidationError(
                     f"Question with ID {question_id} does not exist."
@@ -96,35 +110,38 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
                 )
             if not answer_text:
                 raise serializers.ValidationError(
-                    "You have to answer all the questions"
+                    "You have to answer all the questions."
                 )
-        if EssayAnswer.objects.filter(
-            posting_id=posting_id,
-            applicant_name=data["applicant_name"],
-            applicant_email=data["applicant_email"],
-            applicant_phone_number=data["applicant_phone_number"],
-        ).exists():
-            raise serializers.ValidationError(
-                "You have already submitted answers for this job posting."
-            )
+
+            if EssayAnswer.objects.filter(
+                job_posting=job_posting,
+                question=question,
+                applicant_name=data["applicant_name"],
+                applicant_email=data["applicant_email"],
+                applicant_phone_number=data["applicant_phone_number"],
+            ).exists():
+                raise serializers.ValidationError(
+                    f"Answer for question ID {question_id} already exists for this applicant."
+                )
 
         return data
 
     def create(self, validated_data):
-        posting_id = validated_data.get("posting_id")
+        posting_id = validated_data.pop("posting_id")
+        applicant_name = validated_data.pop("applicant_name")
+        applicant_email = validated_data.pop("applicant_email")
+        applicant_phone_number = validated_data.pop("applicant_phone_number")
+        answers_data = validated_data.pop("answers")
+
         job_posting = JobPosting.objects.get(id=posting_id)
-        applicant_name = validated_data.get("applicant_name")
-        applicant_email = validated_data.get("applicant_email")
-        applicant_phone_number = validated_data.get("applicant_phone_number")
+        created_answers = []
 
-        answers = validated_data.get("answers", [])
-
-        for answer_data in answers:
+        for answer_data in answers_data:
             question_id = answer_data.get("question_id")
             answer_text = answer_data.get("answer_text")
             question = EssayQuestion.objects.get(id=question_id)
 
-            EssayAnswer.objects.create(
+            essay_answer = EssayAnswer.objects.create(
                 job_posting=job_posting,
                 question=question,
                 applicant_name=applicant_name,
@@ -133,7 +150,15 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
                 answer_text=answer_text,
             )
 
-        return validated_data
+            created_answers.append(essay_answer)
+
+        return {
+            "posting_id": posting_id,
+            "applicant_name": applicant_name,
+            "applicant_email": applicant_email,
+            "applicant_phone_number": applicant_phone_number,
+            "answers": created_answers,
+        }
 
 
 class SummarySerializer(serializers.ModelSerializer):

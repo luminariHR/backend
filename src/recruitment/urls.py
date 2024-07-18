@@ -5,7 +5,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r"postings", JobPostingViewSet)
 router.register(r"questions", EssayQuestionViewSet)
-router.register(r"answers", EssayAnswerViewSet)
+# router.register(r"answers", EssayAnswerViewSet)
 router.register(r"summaries", SummaryViewSet)
 
 urlpatterns = [
@@ -21,7 +21,7 @@ urlpatterns = [
         name="applicant_essays",
     ),
     path(
-        "answers/<int:posting_id>",
+        "answers/<int:posting_id>/",
         AnswerView.as_view(),
         name="posting_answer",
     ),

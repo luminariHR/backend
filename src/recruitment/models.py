@@ -49,19 +49,6 @@ class EssayAnswer(models.Model):
     applicant_phone_number = models.CharField(max_length=15)
     answer_text = models.TextField()
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "job_posting",
-                    "applicant_name",
-                    "applicant_email",
-                    "applicant_phone_number",
-                ],
-                name="unique_applicant_application",
-            )
-        ]
-
     def __str__(self):
         return f"{self.applicant_name} - {self.question.question_text}"
 
