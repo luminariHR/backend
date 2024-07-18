@@ -1,9 +1,43 @@
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.db import transaction
+from django.utils.crypto import get_random_string
 from rest_framework import serializers
 from departments.models import Department
-from .models import Employee
+from .models import Employee, Project
+
+
+class UserInviteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employee
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(UserInviteSerializer, self).__init__(*args, **kwargs)
+        # Exclude the password field
+        self.fields.pop("password")
+
+    def validate(self, data):
+        filtered_data = {}
+        required_fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "employee_id",
+            "gender",
+            "employment_status",
+            "job_title",
+            "phone_number",
+            "start_date",
+        ]
+        for field in required_fields:
+            if field not in data:
+                raise serializers.ValidationError(
+                    {field: f"{field}는 필수 필드입니다."}
+                )
+            filtered_data[field] = data[field]
+        return filtered_data
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -20,6 +54,12 @@ class DepartmentSerializer(serializers.ModelSerializer):
         return ret
 
 
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ["title", "role", "duration", "description"]
+
+
 class EmployeeSerializer(serializers.ModelSerializer):
     HR_ADMIN_EXCLUSIVE_FIELDS = [
         "employee_id",
@@ -32,6 +72,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         "is_head",
     ]
     is_hr_admin = serializers.BooleanField(write_only=False, required=False)
+    is_department_head = serializers.SerializerMethodField(read_only=True)
     department = DepartmentSerializer()
 
     class Meta:
@@ -52,7 +93,19 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "end_date",
             "is_hr_admin",
             "department",
+            "is_department_head",
+            "skills",
+            "certifications",
+            "projects",
+            "location",
+            "mbti",
+            "hobbies",
         ]
+
+    def get_is_department_head(self, instance):
+        if instance.department:
+            return instance.department.head == instance
+        return False
 
     def is_user_hr_admin(self):
         user = self.context["request"].user
