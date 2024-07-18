@@ -101,7 +101,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -144,13 +144,23 @@ if DJANGO_ENV == "local":
     CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    LOGIN_URL = "http://localhost:5173/login"
 else:
     CELERY_BROKER_URL = "redis://redis:6379/0"
     CELERY_RESULT_BACKEND = "redis://redis:6379/0"
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
     STATIC_ROOT = os.path.join("/app/", "static")
     MEDIA_ROOT = os.path.join("/app/", "media")
+    LOGIN_URL = "https://ktluminari.netlify.app/login"
 
+# 이메일 설정
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
