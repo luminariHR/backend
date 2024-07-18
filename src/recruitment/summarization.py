@@ -14,7 +14,7 @@ summarizer = pipeline(
     no_repeat_ngram_size=3,
     min_length=150,
     length_penalty=2.0,
-    num_beams=2,
+    num_beams=1,
 )
 
 

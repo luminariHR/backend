@@ -33,7 +33,6 @@ def summarize(posting_id, applicant_name, applicant_email):
         questions = []
 
         for question_id, details in spell_result.items():
-            print(details)
             spelled_text = display_colored_text(details)
             question = EssayQuestion.objects.get(id=question_id)
             questions.append(

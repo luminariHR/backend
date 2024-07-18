@@ -47,12 +47,7 @@ class AnswerView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-
-            applicant_name = serializer.validated_data["applicant_name"]
-            applicant_email = serializer.validated_data["applicant_email"]
-
-            summarize.delay(posting_id, applicant_name, applicant_email)
-
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
