@@ -21,7 +21,7 @@ def summarize(posting_id, applicant_name, applicant_email):
         summarys = []
 
         for text in content:
-            summ_text = summary_model(text["asnwer"])
+            summ_text = summary_model(text["answer"])
             summarys.append(
                 {
                     "qeustion": text["question"],
