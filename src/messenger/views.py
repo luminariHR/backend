@@ -25,6 +25,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"])
     def create_or_get_chat_room(self, request, *args, **kwargs):
         participants_ids = request.data.get("participants", [])
+        participants_ids = list(set(participants_ids))
         if not participants_ids:
             return Response(
                 {"error": "Participants are required"},
