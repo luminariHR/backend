@@ -51,9 +51,12 @@ class AnswerView(APIView):
             applicant_name = serializer.validated_data["applicant_name"]
             applicant_email = serializer.validated_data["applicant_email"]
 
-            summarize.delay(posting_id, applicant_name, applicant_email)
+            # summarize.delay(posting_id, applicant_name, applicant_email)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"applicant_name": applicant_name, "applicant_email": applicant_email},
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -118,9 +121,11 @@ class SummaryViewSet(viewsets.ModelViewSet):
         applicant_email = request.query_params.get("applicant_email")
 
         if posting_id and applicant_email:
-            summary = Summary.objects.filter(
-                job_posting__id=posting_id, applicant_email=applicant_email
-            )
+            job_posting = JobPosting.objects.get(id=posting_id)
+            # summary = Summary.objects.filter(
+            #     job_posting=job_posting, applicant_email=applicant_email
+            # )
+            summary = Summary.objects.filter(applicant_email=applicant_email)
             if not summary.exists():
                 return Response({"error": "Summary not found."}, status=404)
         else:

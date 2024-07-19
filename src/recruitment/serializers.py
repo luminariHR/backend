@@ -164,4 +164,4 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
 class SummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Summary
-        fields = ["job_posting", "summary", "techs", "jobs", "questions"]
+        fields = ["job_posting", "summarys", "techs", "jobs", "questions"]

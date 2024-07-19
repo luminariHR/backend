@@ -1,10 +1,10 @@
 from .hanspell import spell_checker
 import re
-import pandas as pd
 import os
 from openai import OpenAI
 import json
 from transformers import pipeline
+import csv
 
 
 summarizer = pipeline(
@@ -14,7 +14,7 @@ summarizer = pipeline(
     no_repeat_ngram_size=3,
     min_length=150,
     length_penalty=2.0,
-    num_beams=8,
+    num_beams=1,
 )
 
 
@@ -84,10 +84,12 @@ def job_tech(applicant):
     # 기술, 직종 분류 모델
     # {"techs" : 자소서 기반 사용 가능한 기술들, "jobs" : 이 사람에게 어울리는 직종}
     def sub_job_tech(text):
-        data = pd.read_csv(
-            "./data/output.csv"
-        )  # 실제 잡코리아 내에 있는 직종 분류된 데이터
-        jobs_list = list(set(data["Inner Text"].tolist()))
+        data_list = set()
+        with open("./data/output.csv", newline="", encoding="utf-8") as csvfile:
+            data = csv.DictReader(csvfile)
+            for row in data:
+                data_list.add(row["Inner Text"])
+        jobs_list = list(data_list)
 
         client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
