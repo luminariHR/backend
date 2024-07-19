@@ -21,6 +21,21 @@ class JobPostingSerializer(serializers.ModelSerializer):
         model = JobPosting
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        request = self.context.get("request")
+        if (
+            request
+            and not request.user.groups.filter(
+                name=settings.HR_ADMIN_GROUP_NAME
+            ).exists()
+        ):
+            representation.pop("number_of_applicants", None)
+            representation.pop("applicants", None)
+
+        return representation
+
     def get_number_of_applicants(self, obj):
         return obj.number_of_applicants()
 
@@ -36,30 +51,30 @@ class JobPostingSerializer(serializers.ModelSerializer):
 
         return job_posting
 
-    def update(self, instance, validated_data):
-        questions_data = validated_data.pop("questions", [])
-        existing_questions = {
-            question.id: question for question in instance.questions.all()
-        }
+    # def update(self, instance, validated_data):
+    #     questions_data = validated_data.pop("questions", [])
+    #     existing_questions = {
+    #         question.id: question for question in instance.questions.all()
+    #     }
 
-        for question_data in questions_data:
-            question_id = question_data.get("id")
-            if question_id:
-                if question_id in existing_questions:
-                    question = existing_questions.pop(question_id)
-                    for attr, value in question_data.items():
-                        setattr(question, attr, value)
-                    question.save()
-            else:
-                EssayQuestion.objects.create(job_posting=instance, **question_data)
+    #     for question_data in questions_data:
+    #         question_id = question_data.get("id")
+    #         if question_id:
+    #             if question_id in existing_questions:
+    #                 question = existing_questions.pop(question_id)
+    #                 for attr, value in question_data.items():
+    #                     setattr(question, attr, value)
+    #                 question.save()
+    #         else:
+    #             EssayQuestion.objects.create(job_posting=instance, **question_data)
 
-        for question_id, question in existing_questions.items():
-            question.delete()
+    #     for question_id, question in existing_questions.items():
+    #         question.delete()
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+    #     instance.save()
+    #     return instance
 
 
 class EssayAnswerSerializer(serializers.ModelSerializer):
@@ -83,9 +98,15 @@ class EssayAnswerSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         posting_id = data.get("posting_id")
-        job_posting = JobPosting.objects.get(id=posting_id)
+        try:
+            job_posting = JobPosting.objects.get(id=posting_id)
 
-        if not job_posting:
+            if job_posting.status != "open":
+                raise serializers.ValidationError(
+                    "This job posting is not currently open."
+                )
+
+        except JobPosting.DoesNotExist:
             raise serializers.ValidationError(
                 f"Job Posting with ID {posting_id} does not exist."
             )

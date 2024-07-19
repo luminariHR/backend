@@ -1,11 +1,24 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 
 
 class JobPosting(models.Model):
+
+    PRE_OPEN = "pre_open"
+    OPEN = "open"
+    CLOSED = "closed"
+
+    STATUS_CHOICES = [
+        (PRE_OPEN, "Pre_Open"),
+        (OPEN, "Open"),
+        (CLOSED, "Closed"),
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField()
     position = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PRE_OPEN)
 
     def __str__(self):
         return self.title

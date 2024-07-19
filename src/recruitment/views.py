@@ -5,13 +5,44 @@ from rest_framework.permissions import AllowAny
 from core.permissions import IsHRAdmin
 from .models import *
 from .serializers import *
-from .tasks import summarize
+from django.conf import settings
+from rest_framework.decorators import action
 
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     queryset = JobPosting.objects.all()
     serializer_class = JobPostingSerializer
-    permission_classes = [IsHRAdmin]
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name=settings.HR_ADMIN_GROUP_NAME).exists():
+            return JobPosting.objects.all()
+        return JobPosting.objects.filter(status="open")
+
+    def get_permissions(self):
+        if self.request.user.groups.filter(name=settings.HR_ADMIN_GROUP_NAME).exists():
+            return [IsHRAdmin() for _ in self.permission_classes]
+
+        if self.request.method in ["GET"]:
+            return [AllowAny()]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    @action(detail=True, methods=["patch"])
+    def update_status(self, request, pk=None):
+        job_posting = self.get_object()
+        new_status = request.data.get("status")
+
+        if new_status not in dict(JobPosting.STATUS_CHOICES).keys():
+            return Response(
+                {"detail": "Invalid status value."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        job_posting.status = new_status
+        job_posting.save()
+
+        serializer = self.get_serializer(job_posting)
+        return Response(serializer.data)
 
 
 class EssayQuestionViewSet(viewsets.ModelViewSet):

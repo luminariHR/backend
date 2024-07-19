@@ -1,21 +1,20 @@
 from .hanspell import spell_checker
 import re
-import pandas as pd
 import os
 from openai import OpenAI
 import json
 from transformers import pipeline
 
 
-summarizer = pipeline(
-    "summarization",
-    model="aoome123/my_model",
-    max_length=600,
-    no_repeat_ngram_size=3,
-    min_length=150,
-    length_penalty=2.0,
-    num_beams=1,
-)
+# summarizer = pipeline(
+#     "summarization",
+#     model="aoome123/my_model",
+#     max_length=600,
+#     no_repeat_ngram_size=3,
+#     min_length=150,
+#     length_penalty=2.0,
+#     num_beams=1,
+# )
 
 
 def hanspell_model(applicant):
