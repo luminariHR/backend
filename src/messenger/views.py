@@ -13,6 +13,15 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     queryset = ChatRoom.objects.all()
     serializer_class = ChatRoomSerializer
 
+    def get_queryset(self):
+        user_id = self.request.user.id
+
+        chat_rooms = ChatRoom.objects.filter(
+            chatroomparticipant__employee_id=user_id
+        ).distinct()
+
+        return chat_rooms
+
     @action(detail=False, methods=["post"])
     def create_or_get_chat_room(self, request, *args, **kwargs):
         participants_ids = request.data.get("participants", [])
