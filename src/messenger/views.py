@@ -49,7 +49,16 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         existing_chat_room = self.chat_room_exists(participants_ids)
         if existing_chat_room:
             return existing_chat_room
-        new_chat_room = ChatRoom.objects.create(name=f"chatroom_{participants_ids}")
+        participant_names = []
+        for participant_id in participants_ids:
+            participant = Employee.objects.get(id=participant_id)
+            first_name = participant.first_name
+            last_name = participant.last_name
+            name = last_name + first_name
+            participant_names.append(name)
+        chatroom_name = ",".join(participant_names)
+
+        new_chat_room = ChatRoom.objects.create(name=chatroom_name)
         for participant_id in participants_ids:
             ChatRoomParticipant.objects.create(
                 chat_room=new_chat_room, employee_id=participant_id
@@ -92,6 +101,19 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
             )
 
         ChatRoomParticipant.objects.create(chat_room=chat_room, employee_id=user_id)
+        new_chat_room_participants = ChatRoomParticipant.objects.filter(
+            chat_room=chat_room
+        ).values_list("employee_id", flat=True)
+        participant_names = []
+        for participant_id in new_chat_room_participants:
+            participant = Employee.objects.get(id=participant_id)
+            first_name = participant.first_name
+            last_name = participant.last_name
+            name = last_name + first_name
+            participant_names.append(name)
+        chatroom_name = ",".join(participant_names)
+        chat_room.name = chatroom_name
+        chat_room.save()
         serializer = self.get_serializer(chat_room)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -99,6 +121,21 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     def leave(self, request, pk=None, *args, **kwargs):
         chat_room = self.get_object()
         employee = request.user
+        new_chat_room_participants = ChatRoomParticipant.objects.filter(
+            chat_room=chat_room
+        ).values_list("employee_id", flat=True)
+        participant_names = []
+        for participant_id in new_chat_room_participants:
+            if participant_id == employee.id:
+                continue
+            participant = Employee.objects.get(id=participant_id)
+            first_name = participant.first_name
+            last_name = participant.last_name
+            name = last_name + first_name
+            participant_names.append(name)
+        chatroom_name = ",".join(participant_names)
+        chat_room.name = chatroom_name
+        chat_room.save()
         participant = ChatRoomParticipant.objects.filter(
             employee=employee, chat_room=chat_room, left_at__isnull=True
         ).first()
