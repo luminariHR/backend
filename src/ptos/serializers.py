@@ -3,7 +3,7 @@ from departments.models import Department
 from users.models import Employee
 from django.utils import timezone
 from django.db.models import Q
-from .models import PTO, PTOType
+from .models import PTO
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
