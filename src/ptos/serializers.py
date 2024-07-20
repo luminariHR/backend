@@ -19,12 +19,21 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ["id", "name", "profile_image", "department"]
+        fields = [
+            "id",
+            "employee_id",
+            "name",
+            "job_title",
+            "profile_image",
+            "department",
+        ]
 
 
 class PTOEmployeeSerializer(serializers.Serializer):
 
     id = serializers.IntegerField()
+    employee_id = serializers.CharField()
+    job_title = serializers.CharField()
     name = serializers.CharField()
     profile_image = serializers.FileField()
     department = DepartmentSerializer()
