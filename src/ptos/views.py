@@ -103,9 +103,10 @@ class PTOsView(APIView):
 
     def post(self, request, version):
         context = {"request": request}
-        pto_type = PTOType.objects.get(pto_type=request.data["pto_type"])
-        request.data["pto_type"] = pto_type.id
-        serializer = PTOSerializer(data=request.data, context=context)
+        data = request.data.copy()
+        pto_type = PTOType.objects.get(pto_type=data["pto_type"])
+        data["pto_type"] = pto_type.id
+        serializer = PTOSerializer(data=data, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(
