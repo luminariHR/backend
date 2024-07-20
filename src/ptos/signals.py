@@ -16,11 +16,11 @@ def send_pto_notification(sender, instance: PTO, created, **kwargs):
             authorizer.id,
             message,
             "pto_requested",
-            {"pto_id": instance.id},
+            {"pto_id": str(instance.id)},
         )
     elif instance.status == "approved":
         message = f"{employee.name}님, 휴가 요청 1건이 승인되었습니다."
-        send_notification(employee.id, message, "pto_reviewed", {"pto_id": instance.id})
+        send_notification(employee.id, message, "pto_reviewed", {"pto_id": str(instance.id)})
     elif instance.status == "rejected":
         message = f"{employee.name}님, 휴가 요청 1건이 반려되었습니다."
-        send_notification(employee.id, message, "pto_reviewed", {"pto_id": instance.id})
+        send_notification(employee.id, message, "pto_reviewed", {"pto_id": str(instance.id)})
