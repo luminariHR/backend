@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
+from django.utils import timezone
 from .serializers import PTOSerializer, DailyPTOSerializer, MonthlyPTOSerializer
 from .models import PTO, PTOType
 
@@ -87,8 +88,16 @@ class PTOsView(APIView):
         context = {"request": request}
         user = self.request.user
         ptos = PTO.objects.filter(employee=user)
+        pto_type = PTOType.objects.get(pto_type="default")
+        strategy = pto_type.get_strategy()
+        today = timezone.now().date()
         serializer = PTOSerializer(ptos, context=context, many=True)
-        return Response(serializer.data)
+        return Response(
+            {
+                "default_pto_left": strategy.ptos_left(user, today),
+                "records": serializer.data,
+            }
+        )
 
     def post(self, request, version):
         context = {"request": request}

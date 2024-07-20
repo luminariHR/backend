@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 from django.utils import timezone
-from django.core.exceptions import ValidationError
 from core.models import AbstractBaseModel
 from users.models import Employee
 
@@ -75,7 +74,7 @@ class PTO(AbstractBaseModel):
         self.clean()
         today = timezone.now().date()
         strategy = self.pto_type.get_strategy()
-        if strategy.can_use_pto(self.employee, today):
+        if strategy.can_use_pto(self.employee, today, self.start_date, self.end_date):
             super().save(*args, **kwargs)
 
     def clean(self):
