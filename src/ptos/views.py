@@ -52,6 +52,8 @@ class MonthlyPTOView(APIView):
                 employees.append(
                     {
                         "id": pto.employee.id,
+                        "employee_id": pto.employee.employee_id,
+                        "job_title": pto.employee.job_title,
                         "name": pto.employee.name,
                         "department": pto.employee.department,
                         "start_date": pto.start_date,
