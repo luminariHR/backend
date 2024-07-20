@@ -24,7 +24,9 @@ class Notification(AbstractBaseModel):
         (PTO_REVIEWED, "PTO Reviewed"),
     )
 
-    receiver = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name="received_notifications"
+    )
     message = models.TextField()
     notification_type = models.CharField(
         choices=NOTIFICATION_TYPE_CHOICES, max_length=30

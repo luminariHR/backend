@@ -68,6 +68,8 @@ urlpatterns = [
     re_path(r"api/(?P<version>(v1))/admin/chatbot/", include("chatbot.admin_urls")),
     # 메신저
     re_path(r"api/(?P<version>(v1|v2))/messenger/", include("messenger.urls")),
+    # 알림
+    re_path(r"api/(?P<version>(v1|v2))/notifications/", include("notifications.urls")),
 ]
 
 if settings.DEBUG:
