@@ -141,11 +141,16 @@ class AgendaReviewRequestCreateSerializer(serializers.Serializer):
                 status="pending" if order == 0 else "standby",
             )
             if order == 0:
-                message = f"{agenda.drafter.name}님이 새로운 결재 1건을 요청했습니다."
+                drafter_name = agenda.drafter.name
+                if agenda.drafter.profile_image:
+                    drafter_profile_image_url = agenda.drafter.profile_image.url
+                else:
+                    drafter_profile_image_url = None
+                message = f"{drafter_name}님이 새로운 결재 1건을 요청했습니다."
                 context = {
                     "from": {
-                        "name": agenda.drafter.name,
-                        "profile_image": agenda.drafter.profile_image.url,
+                        "name": drafter_name,
+                        "profile_image": drafter_profile_image_url,
                     },
                     "path": f"/approval/details/{agenda.id}",
                 }
