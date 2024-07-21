@@ -9,18 +9,32 @@ def send_pto_notification(sender, instance: PTO, created, **kwargs):
     authorizer = instance.authorizer
     employee = instance.employee
     if created and instance.status == "pending":
-        message = (
-            f"{authorizer.name}님, {employee.name}님의 휴가 요청 1건이 들어왔습니다."
-        )
-        send_notification(
-            authorizer.id,
-            message,
-            "pto_requested",
-            {"pto_id": str(instance.id)},
-        )
+        message = f"{employee.name}님의 휴가 요청 1건이 들어왔습니다."
+        context = {
+            "from": {
+                "name": employee.name,
+                "profile_image": employee.profile_image.url,
+            },
+            "path": f"/vacation/details/{str(instance.id)}",
+        }
+        send_notification(authorizer.id, message, "pto_requested", context)
     elif instance.status == "approved":
-        message = f"{employee.name}님, 휴가 요청 1건이 승인되었습니다."
-        send_notification(employee.id, message, "pto_reviewed", {"pto_id": str(instance.id)})
+        message = f"{employee.name}님의 휴가 요청 1건이 승인되었습니다."
+        context = {
+            "from": {
+                "name": employee.name,
+                "profile_image": employee.profile_image.url,
+            },
+            "path": f"/vacation/details/{str(instance.id)}",
+        }
+        send_notification(employee.id, message, "pto_reviewed", context)
     elif instance.status == "rejected":
-        message = f"{employee.name}님, 휴가 요청 1건이 반려되었습니다."
-        send_notification(employee.id, message, "pto_reviewed", {"pto_id": str(instance.id)})
+        message = f"{employee.name}님의 휴가 요청 1건이 반려되었습니다."
+        context = {
+            "from": {
+                "name": employee.name,
+                "profile_image": employee.profile_image.url,
+            },
+            "path": f"/vacation/details/{str(instance.id)}",
+        }
+        send_notification(employee.id, message, "pto_reviewed", context)
