@@ -79,4 +79,5 @@ jobs:
                       sudo docker load -i /home/dev/luminari_web.tar &&
                       sudo docker load -i /home/dev/luminari_certbot.tar &&
                       sudo docker load -i /home/dev/luminari_celery.tar &&
-                      sudo docker compose -f /home/dev/docker-compose.yml up -d"
+                      sudo docker compose -f /home/dev/docker-compose.yml up -d &&
+                      sudo docker image prune -f"
