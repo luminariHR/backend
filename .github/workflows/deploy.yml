@@ -67,6 +67,17 @@ jobs:
                       sudo git config --global --add safe.directory /home/dev/backend &&
                       git checkout main &&
                       git pull &&
+                      sudo docker compose -f docker-compose.yml build &&
+                      sudo docker save luminari_nginx:latest -o /home/dev/luminari_nginx.tar &&
+                      sudo docker save luminari_web:latest -o /home/dev/luminari_web.tar &&
+                      sudo docker save luminari_certbot:latest -o /home/dev/luminari_certbot.tar &&
+                      sudo docker save luminari_celery:latest -o /home/dev/luminari_celery.tar &&
+                      sudo cp docker-compose.yml /home/dev/docker-compose.yml &&
+                      cd /home/dev/ &&
+                      sudo docker load -i /home/dev/luminari_nginx.tar &&
+                      sudo docker load -i /home/dev/luminari_web.tar &&
+                      sudo docker load -i /home/dev/luminari_certbot.tar &&
+                      sudo docker load -i /home/dev/luminari_celery.tar &&
                       sudo docker compose -f docker-compose.yml down &&
                       sudo docker compose -f docker-compose.yml up -d &&
                       sudo docker image prune -f"
