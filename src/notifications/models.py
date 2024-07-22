@@ -11,6 +11,7 @@ class Notification(AbstractBaseModel):
     APPOINTMENT_CREATED = "appointment_created"  # 인사발령
     AGENDA_REVIEWED = "agenda_reviewed"
     AGENDA_REQUESTED = "agenda_requested"
+    NEW_MASSEGE = "new_message"
 
     NOTIFICATION_TYPE_CHOICES = (
         (TO_DO_ASSIGNED, "To Do Assigned"),
@@ -18,6 +19,7 @@ class Notification(AbstractBaseModel):
         (APPOINTMENT_CREATED, "Appointment Created"),
         (AGENDA_REVIEWED, "Agenda Reviewed"),
         (AGENDA_REQUESTED, "Agenda Requested"),
+        (NEW_MASSEGE, "New Message"),
     )
 
     receiver = models.ForeignKey(Employee, on_delete=models.CASCADE)
