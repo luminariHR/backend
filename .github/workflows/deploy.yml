@@ -51,17 +51,6 @@ jobs:
               echo 'EMAIL_HOST_PASSWORD = "${{ secrets.DEV_EMAIL_HOST_PASSWORD }}"'
           } > .env.dev
 
-#      - name: Build and push Docker images
-#        env:
-#          DOCKER_BUILDKIT: 1
-#          COMPOSE_DOCKER_CLI_BUILD: 1
-#        run: |
-#          docker-compose -f docker-compose.yml build
-#          docker save luminari_nginx:latest -o luminari_nginx.tar
-#          docker save luminari_web:latest -o luminari_web.tar
-#          docker save luminari_certbot:latest -o luminari_certbot.tar
-#          docker save luminari_celery:latest -o luminari_celery.tar
-
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
@@ -74,6 +63,7 @@ jobs:
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
           scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/
           ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
+                      cd /home/dev &&
                       cp .env.dev backend/.env.dev &&
                       cd backend &&
                       git checkout main &&
