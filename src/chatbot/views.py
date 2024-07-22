@@ -1,3 +1,4 @@
+import uuid
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -60,6 +61,28 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, answer=response)
 
 
+class ChatbotDocumentListView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, version):
+        context = {"request": request}
+        document = ChatbotDocument.objects.all()
+        serializer = ChatbotDocumentSerializer(document, context=context, many=True)
+        return Response(serializer.data)
+
+
+class ChatbotDocumentView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, version, document_id):
+        context = {"request": request}
+        document = ChatbotDocument.objects.get(id=document_id)
+        serializer = ChatbotDocumentSerializer(document, context=context)
+        return Response(serializer.data)
+
+
 # HR 관리자 View
 class AdminChatbotDocumentCreateView(APIView):
 
@@ -67,7 +90,14 @@ class AdminChatbotDocumentCreateView(APIView):
 
     def post(self, request, version):
         context = {"request": request}
-        serializer = ChatbotDocumentSerializer(data=request.data, context=context)
+        data = {
+            "name": request.data["name"],
+            "description": request.data["description"],
+            "category": request.data["category"],
+            "id": uuid.uuid4(),
+            "file": request.data["file"],
+        }
+        serializer = ChatbotDocumentSerializer(data=data, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -78,16 +108,6 @@ class AdminChatbotDocumentCreateView(APIView):
             )
         return Response(serializer.errors, status=400)
 
-    def get(self, request, version, document_id=None):
-        context = {"request": request}
-        if document_id is None:
-            documents = ChatbotDocument.objects.all()
-            serializer = ChatbotDocumentSerializer(documents, many=True)
-        else:
-            document = ChatbotDocument.objects.filter(id=document_id).distinct()
-            serializer = ChatbotDocumentSerializer(document)
-        return Response(serializer.data)
-
 
 class AdminChatbotDocumentView(APIView):
 
@@ -96,5 +116,20 @@ class AdminChatbotDocumentView(APIView):
     def get(self, request, version, document_id):
         context = {"request": request}
         document = ChatbotDocument.objects.get(id=document_id)
-        serializer = ChatbotDocumentSerializer(document)
+        serializer = ChatbotDocumentSerializer(document, context=context)
         return Response(serializer.data)
+
+    def delete(self, request, version, document_id):
+        context = {"request": request}
+        try:
+            document = ChatbotDocument.objects.get(id=document_id)
+        except ChatbotDocument.DoesNotExist:
+            return Response(
+                {"message": "존재하지 않는 문서입니다."},
+                status=404,
+            )
+        serializer = ChatbotDocumentSerializer(
+            document, data=request.data, partial=True, context=context
+        )
+        serializer.delete(document)
+        return Response({"message": "성공적으로 문서가 삭제됐습니다."}, status=200)

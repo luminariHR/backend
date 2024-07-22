@@ -52,6 +52,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     "message": message,
                     "message_id": event["message_id"],
                     "notification_type": event["notification_type"],
+                    "context": event["context"],
                 },
                 ensure_ascii=False,
             )

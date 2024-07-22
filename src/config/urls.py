@@ -47,6 +47,8 @@ urlpatterns = [
     # 일정 관리
     re_path(r"api/(?P<version>(v1))/events/", include("events.urls")),
     re_path(r"api/(?P<version>(v1))/admin/events/", include("events.admin_urls")),
+    # 휴가 관리
+    re_path(r"api/(?P<version>(v1))/ptos/", include("ptos.urls")),
     # 회원 관리
     re_path(r"api/(?P<version>(v1))/", include("users.urls")),
     re_path(
@@ -68,6 +70,8 @@ urlpatterns = [
     re_path(r"api/(?P<version>(v1|v2))/messenger/", include("messenger.urls")),
     # 채용
     re_path(r"api/(?P<version>(v1|v2))/recruitment/", include("recruitment.urls")),
+    # 알림
+    re_path(r"api/(?P<version>(v1|v2))/notifications/", include("notifications.urls")),
 ]
 
 if settings.DEBUG:

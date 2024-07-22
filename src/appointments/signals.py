@@ -23,5 +23,16 @@ def apply_appointment(sender, instance, **kwargs):
                 employee.department.head = None
             employee.department.save()
             # 인사 발령 노티
-            message = f"{employee.name} 님, {instance.effective_date} 부로 팀/직책이 변경 되었습니다. 확인해주세요."
-            send_notification(employee.id, message, "appointment_created")
+            message = f"{instance.effective_date} 부로 팀/직책이 변경 되었습니다!"
+            if employee.profile_image:
+                employee_profile_image_url = employee.profile_image.url
+            else:
+                employee_profile_image_url = None
+            context = {
+                "from": {
+                    "name": employee.name,
+                    "profile_image": employee_profile_image_url,
+                },
+                "path": "/myprofile",
+            }
+            send_notification(employee.id, message, "appointment_created", context)
