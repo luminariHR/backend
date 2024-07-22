@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "ptos",
     "corsheaders",
     "django_extensions",
+    "recruitment",
 ]
 
 MIDDLEWARE = [
