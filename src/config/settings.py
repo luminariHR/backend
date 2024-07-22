@@ -142,8 +142,8 @@ DATABASES = {
 }
 
 if DJANGO_ENV == "local":
-    CELERY_BROKER_URL = "redis://127.0.0.1:6379"
-    CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379"
+    CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+    CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     LOGIN_URL = "http://localhost:5173/login"
@@ -154,6 +154,7 @@ else:
     STATIC_ROOT = os.path.join("/app/", "static")
     MEDIA_ROOT = os.path.join("/app/", "media")
     LOGIN_URL = "https://ktluminari.netlify.app/login"
+
 
 # 이메일 설정
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
