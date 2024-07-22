@@ -34,12 +34,12 @@ def handle_new_message(sender, instance: Message, **kwargs):
         try:
             user = Employee.objects.get(id=user_id)
             message = f"새로운 메시지가 채팅방에 도착했습니다: {instance.content}"
-            context = {
-                "from": {
-                    "name": instance.sender.name,
-                },
-                "path": f"/chat/{instance.chat_room.id}",
-            }
-            send_notification(user.id, message, "new_message", context)
+            # context = {
+            #     "from": {
+            #         "name": instance.sender.name,
+            #     },
+            #     "path": f"/chat/{instance.chat_room.id}",
+            # }
+            send_notification(user.id, message, "new_message")
         except Employee.DoesNotExist:
             continue
