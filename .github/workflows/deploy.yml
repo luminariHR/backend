@@ -61,11 +61,9 @@ jobs:
           echo "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/
+          scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/backend
           ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
-                      cd /home/dev &&
-                      cp .env.dev backend/.env.dev &&
-                      cd backend &&
+                      cd /home/dev/backend &&
                       git checkout main &&
                       git pull &&
                       sudo docker compose -f docker-compose.yml down &&
