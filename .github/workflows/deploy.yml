@@ -64,6 +64,7 @@ jobs:
           scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/backend
           ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
                       cd /home/dev/backend &&
+                      sudo git config --global --add safe.directory /home/dev/backend &&
                       git checkout main &&
                       git pull &&
                       sudo docker compose -f docker-compose.yml down &&
