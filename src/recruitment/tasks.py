@@ -7,7 +7,11 @@ from .summarization import *
 def summarize(posting_id, applicant_name, applicant_email):
     try:
         job_posting = JobPosting.objects.get(id=posting_id)
-        answers = EssayAnswer.objects.filter(job_posting=job_posting)
+        answers = EssayAnswer.objects.filter(
+            job_posting=job_posting,
+            applicant_name=applicant_name,
+            applicant_email=applicant_email,
+        )
 
         content = []
         for answer in answers:
@@ -20,14 +24,24 @@ def summarize(posting_id, applicant_name, applicant_email):
 
         summarys = []
 
+        MINIMUM_ANSWER_LENGTH = 250
+
         for text in content:
-            summ_text = summary_model(text["answer"])
-            summarys.append(
-                {
-                    "question": text["question"],
-                    "summary": summ_text[0]["summary_text"],
-                }
-            )
+            if len(text["answer"]) < MINIMUM_ANSWER_LENGTH:
+                summarys.append(
+                    {
+                        "question": text["question"],
+                        "summary": f"최소 {MINIMUM_ANSWER_LENGTH}자 이상의 답변만 요약을 제공합니다.",
+                    }
+                )
+            else:
+                summ_text = summary_model(text["answer"])
+                summarys.append(
+                    {
+                        "question": text["question"],
+                        "summary": summ_text[0]["summary_text"],
+                    }
+                )
 
         spell_result = hanspell_model(content)
         questions = []

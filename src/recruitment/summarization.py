@@ -1,20 +1,18 @@
 from .hanspell import spell_checker
-import re
-import os
+import re, os, json
+import csv
 from openai import OpenAI
-import json
 from transformers import pipeline
 
-
-# summarizer = pipeline(
-#     "summarization",
-#     model="aoome123/my_model",
-#     max_length=600,
-#     no_repeat_ngram_size=3,
-#     min_length=150,
-#     length_penalty=2.0,
-#     num_beams=1,
-# )
+summarizer = pipeline(
+    "summarization",
+    model="aoome123/my_model",
+    max_length=600,
+    no_repeat_ngram_size=3,
+    min_length=150,
+    length_penalty=2.0,
+    num_beams=1,
+)
 
 
 def hanspell_model(applicant):
@@ -83,11 +81,14 @@ def job_tech(applicant):
     # 기술, 직종 분류 모델
     # {"techs" : 자소서 기반 사용 가능한 기술들, "jobs" : 이 사람에게 어울리는 직종}
     def sub_job_tech(text):
-        data = pd.read_csv(
-            "./recruitment/data/output.csv"
-        )  # 실제 잡코리아 내에 있는 직종 분류된 데이터
-        jobs_list = list(set(data["Inner Text"].tolist()))
-
+        data_list = set()
+        with open(
+            "./recruitment/data/output.csv", newline="", encoding="utf-8"
+        ) as csvfile:
+            data = csv.DictReader(csvfile)
+            for row in data:
+                data_list.add(row["Inner Text"])
+        jobs_list = list(data_list)
         client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
         # 질문 및 응답을 처리할 함수

@@ -5,7 +5,7 @@
 groups = ["default", "lint", "hook"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.2"
-content_hash = "sha256:a6eeeb7bd346ced071d83458f4e26a989140b82d04687c1605ca5a5d9aff9bb6"
+content_hash = "sha256:6c7b3e1cc0d04d7d0f2d65b0272db13e429b783734dc9ed4d818136da89da102"
 
 [[package]]
 name = "absl-py"
@@ -13,6 +13,7 @@ version = "2.1.0"
 requires_python = ">=3.7"
 summary = "Abseil Python Common Libraries, see https://github.com/abseil/abseil-py."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "absl-py-2.1.0.tar.gz", hash = "sha256:7820790efbb316739cde8b4e19357243fc3608a152024288513dd968d7d959ff"},
     {file = "absl_py-2.1.0-py3-none-any.whl", hash = "sha256:526a04eadab8b4ee719ce68f204172ead1027549089702d99b9059f129ff1308"},
@@ -120,6 +121,7 @@ name = "astunparse"
 version = "1.6.3"
 summary = "An AST unparser for Python"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "six<2.0,>=1.6.1",
     "wheel<1.0,>=0.23.0",
@@ -661,6 +663,7 @@ name = "flatbuffers"
 version = "24.3.25"
 summary = "The FlatBuffers serialization format for Python"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "flatbuffers-24.3.25-py2.py3-none-any.whl", hash = "sha256:8dbdec58f935f3765e4f7f3cf635ac3a77f83568138d6a2311f524ec96364812"},
     {file = "flatbuffers-24.3.25.tar.gz", hash = "sha256:de2ec5b203f21441716617f38443e0a8ebf3d25bf0d9c0bb0ce68fa00ad546a4"},
@@ -709,6 +712,7 @@ version = "0.6.0"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
 summary = "Python AST that abstracts the underlying Python version"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "gast-0.6.0-py3-none-any.whl", hash = "sha256:52b182313f7330389f72b069ba00f174cfe2a06411099547288839c6cbafbd54"},
     {file = "gast-0.6.0.tar.gz", hash = "sha256:88fc5300d32c7ac6ca7b515310862f71e6fdf2c029bbec7c66c0f5dd47b6b1fb"},
@@ -719,6 +723,7 @@ name = "google-pasta"
 version = "0.2.0"
 summary = "pasta is an AST-based Python refactoring library"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "six",
 ]
@@ -768,6 +773,7 @@ version = "1.64.1"
 requires_python = ">=3.8"
 summary = "HTTP/2-based RPC framework"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "grpcio-1.64.1-cp311-cp311-linux_armv7l.whl", hash = "sha256:58b1041e7c870bb30ee41d3090cbd6f0851f30ae4eb68228955d973d3efa2e61"},
     {file = "grpcio-1.64.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:bbc5b1d78a7822b0a84c6f8917faa986c1a744e65d762ef6d8be9d75677af2ca"},
@@ -813,6 +819,7 @@ version = "3.11.0"
 requires_python = ">=3.8"
 summary = "Read and write HDF5 files from Python"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "numpy>=1.17.3",
 ]
@@ -992,6 +999,7 @@ version = "3.4.1"
 requires_python = ">=3.9"
 summary = "Multi-backend Keras."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "absl-py",
     "h5py",
@@ -1157,6 +1165,7 @@ name = "libclang"
 version = "18.1.1"
 summary = "Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/main/clang/bindings/python, to make the installation process easier."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "libclang-18.1.1-1-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:0b2e143f0fac830156feb56f9231ff8338c20aecfe72b4ffe96f19e5a1dbb69a"},
     {file = "libclang-18.1.1-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:6f14c3f194704e5d09769108f03185fce7acaf1d1ae4bbb2f30a72c2400cb7c5"},
@@ -1176,6 +1185,7 @@ version = "3.6"
 requires_python = ">=3.8"
 summary = "Python implementation of John Gruber's Markdown."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "Markdown-3.6-py3-none-any.whl", hash = "sha256:48f276f4d8cfb8ce6527c8f79e2ee29708508bf4d40aa410fbc3b4ee832c850f"},
     {file = "Markdown-3.6.tar.gz", hash = "sha256:ed4f41f6daecbeeb96e576ce414c41d2d876daa9a16cb35fa8ed8c2ddfad0224"},
@@ -1187,6 +1197,7 @@ version = "3.0.0"
 requires_python = ">=3.8"
 summary = "Python port of markdown-it. Markdown parsing, done right!"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "mdurl~=0.1",
 ]
@@ -1201,6 +1212,7 @@ version = "2.1.5"
 requires_python = ">=3.7"
 summary = "Safely add untrusted strings to HTML/XML markup."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:629ddd2ca402ae6dbedfceeba9c46d5f7b2a61d9749597d4307f943ef198fc1f"},
     {file = "MarkupSafe-2.1.5-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:5b7b716f97b52c5a14bffdf688f971b2d5ef4029127f1ad7a513973cfd818df2"},
@@ -1235,6 +1247,7 @@ version = "0.1.2"
 requires_python = ">=3.7"
 summary = "Markdown URL utilities"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
@@ -1246,6 +1259,7 @@ version = "0.4.0"
 requires_python = ">=3.9"
 summary = ""
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "numpy>1.20",
     "numpy>=1.21.2; python_version >= \"3.10\"",
@@ -1301,6 +1315,7 @@ name = "namex"
 version = "0.0.8"
 summary = "A simple utility to separate the implementation of your Python package and its public API surface."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "namex-0.0.8-py3-none-any.whl", hash = "sha256:7ddb6c2bb0e753a311b7590f84f6da659dd0c05e65cb89d519d54c0a250c0487"},
     {file = "namex-0.0.8.tar.gz", hash = "sha256:32a50f6c565c0bb10aa76298c959507abdc0e850efe085dc38f3440fcb3aa90b"},
@@ -1364,6 +1379,7 @@ version = "3.3.0"
 requires_python = ">=3.5"
 summary = "Optimizing numpys einsum function"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "numpy>=1.7",
 ]
@@ -1378,6 +1394,7 @@ version = "0.12.1"
 requires_python = ">=3.7"
 summary = "Optimized PyTree Utilities."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "typing-extensions>=4.5.0",
 ]
@@ -1434,29 +1451,6 @@ groups = ["default", "lint"]
 files = [
     {file = "packaging-24.1-py3-none-any.whl", hash = "sha256:5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124"},
     {file = "packaging-24.1.tar.gz", hash = "sha256:026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"},
-]
-
-[[package]]
-name = "pandas"
-version = "2.2.2"
-requires_python = ">=3.9"
-summary = "Powerful data structures for data analysis, time series, and statistics"
-groups = ["default"]
-dependencies = [
-    "numpy>=1.23.2; python_version == \"3.11\"",
-    "python-dateutil>=2.8.2",
-    "pytz>=2020.1",
-    "tzdata>=2022.7",
-]
-files = [
-    {file = "pandas-2.2.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:696039430f7a562b74fa45f540aca068ea85fa34c244d0deee539cb6d70aa288"},
-    {file = "pandas-2.2.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:8e90497254aacacbc4ea6ae5e7a8cd75629d6ad2b30025a4a8b09aa4faf55151"},
-    {file = "pandas-2.2.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:58b84b91b0b9f4bafac2a0ac55002280c094dfc6402402332c0913a59654ab2b"},
-    {file = "pandas-2.2.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6d2123dc9ad6a814bcdea0f099885276b31b24f7edf40f6cdbc0912672e22eee"},
-    {file = "pandas-2.2.2-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:2925720037f06e89af896c70bca73459d7e6a4be96f9de79e2d440bd499fe0db"},
-    {file = "pandas-2.2.2-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:0cace394b6ea70c01ca1595f839cf193df35d1575986e484ad35c4aeae7266c1"},
-    {file = "pandas-2.2.2-cp311-cp311-win_amd64.whl", hash = "sha256:873d13d177501a28b2756375d59816c365e42ed8417b41665f346289adc68d24"},
-    {file = "pandas-2.2.2.tar.gz", hash = "sha256:9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54"},
 ]
 
 [[package]]
@@ -1584,6 +1578,7 @@ version = "4.25.3"
 requires_python = ">=3.8"
 summary = ""
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "protobuf-4.25.3-cp310-abi3-win32.whl", hash = "sha256:d4198877797a83cbfe9bffa3803602bbe1625dc30d8a097365dbc762e5790faa"},
     {file = "protobuf-4.25.3-cp310-abi3-win_amd64.whl", hash = "sha256:209ba4cc916bab46f64e56b85b090607a676f66b473e6b762e6f1d9d591eb2e8"},
@@ -1760,6 +1755,7 @@ version = "2.18.0"
 requires_python = ">=3.8"
 summary = "Pygments is a syntax highlighting package written in Python."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "pygments-2.18.0-py3-none-any.whl", hash = "sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a"},
     {file = "pygments-2.18.0.tar.gz", hash = "sha256:786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"},
@@ -1850,16 +1846,6 @@ groups = ["default"]
 files = [
     {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
     {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
-]
-
-[[package]]
-name = "pytz"
-version = "2024.1"
-summary = "World timezone definitions, modern and historical"
-groups = ["default"]
-files = [
-    {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
-    {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
 ]
 
 [[package]]
@@ -1958,6 +1944,7 @@ version = "13.7.1"
 requires_python = ">=3.7.0"
 summary = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "markdown-it-py>=2.2.0",
     "pygments<3.0.0,>=2.13.0",
@@ -2176,6 +2163,7 @@ version = "2.17.0"
 requires_python = ">=3.9"
 summary = "TensorBoard lets you watch Tensors Flow"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "absl-py>=0.4",
     "grpcio>=1.48.2",
@@ -2197,6 +2185,7 @@ version = "0.7.2"
 requires_python = ">=3.7"
 summary = "Fast data loading for TensorBoard"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "tensorboard_data_server-0.7.2-py3-none-any.whl", hash = "sha256:7e0610d205889588983836ec05dc098e80f97b7e7bbff7e994ebb78f578d0ddb"},
     {file = "tensorboard_data_server-0.7.2-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:9fe5d24221b29625dbc7328b0436ca7fc1c23de4acf4d272f1180856e32f9f60"},
@@ -2209,6 +2198,23 @@ version = "2.17.0"
 requires_python = ">=3.9"
 summary = "TensorFlow is an open source machine learning framework for everyone."
 groups = ["default"]
+dependencies = [
+    "tensorflow-intel==2.17.0; platform_system == \"Windows\"",
+]
+files = [
+    {file = "tensorflow-2.17.0-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:e8d26d6c24ccfb139db1306599257ca8f5cfe254ef2d023bfb667f374a17a64d"},
+    {file = "tensorflow-2.17.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ca82f98ea38fa6c9e08ccc69eb6c2fab5b35b30a8999115b8b63b6f02fc69d9d"},
+    {file = "tensorflow-2.17.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8339777b1b5ebd8ffadaa8196f786e65fbb081a371d8e87b52f24563392d8552"},
+    {file = "tensorflow-2.17.0-cp311-cp311-win_amd64.whl", hash = "sha256:ef615c133cf4d592a073feda634ccbeb521a554be57de74f8c318d38febbeab5"},
+]
+
+[[package]]
+name = "tensorflow-intel"
+version = "2.17.0"
+requires_python = ">=3.9"
+summary = "TensorFlow is an open source machine learning framework for everyone."
+groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "absl-py>=1.0.0",
     "astunparse>=1.6.0",
@@ -2234,10 +2240,7 @@ dependencies = [
     "wrapt>=1.11.0",
 ]
 files = [
-    {file = "tensorflow-2.17.0-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:e8d26d6c24ccfb139db1306599257ca8f5cfe254ef2d023bfb667f374a17a64d"},
-    {file = "tensorflow-2.17.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ca82f98ea38fa6c9e08ccc69eb6c2fab5b35b30a8999115b8b63b6f02fc69d9d"},
-    {file = "tensorflow-2.17.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8339777b1b5ebd8ffadaa8196f786e65fbb081a371d8e87b52f24563392d8552"},
-    {file = "tensorflow-2.17.0-cp311-cp311-win_amd64.whl", hash = "sha256:ef615c133cf4d592a073feda634ccbeb521a554be57de74f8c318d38febbeab5"},
+    {file = "tensorflow_intel-2.17.0-cp311-cp311-win_amd64.whl", hash = "sha256:3f13d4f82e8ca7a217b2e8ff98ce5e396a68cfce9607a13d31c9ba0ce66ba5ce"},
 ]
 
 [[package]]
@@ -2246,7 +2249,7 @@ version = "0.37.1"
 requires_python = "<3.13,>=3.7"
 summary = "TensorFlow IO"
 groups = ["default"]
-marker = "python_version < \"3.12\""
+marker = "python_version < \"3.12\" and platform_system == \"Windows\""
 files = [
     {file = "tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:32c50ab4e29a23c1f91cd0f9ab8c381a0ab10f45ef5c5252e94965916041737c"},
     {file = "tensorflow_io_gcs_filesystem-0.37.1-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:b02f9c5f94fd62773954a04f69b68c4d576d076fd0db4ca25d5479f0fbfcdbad"},
@@ -2260,6 +2263,7 @@ version = "2.4.0"
 requires_python = ">=3.8"
 summary = "ANSI color formatting for output in terminal"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "termcolor-2.4.0-py3-none-any.whl", hash = "sha256:9297c0df9c99445c2412e832e882a7884038a25617c60cea2ad69488d4040d63"},
     {file = "termcolor-2.4.0.tar.gz", hash = "sha256:aab9e56047c8ac41ed798fa36d892a37aca6b3e9159f3e0c24bc64a9b3ac7b7a"},
@@ -2582,6 +2586,7 @@ version = "3.0.3"
 requires_python = ">=3.8"
 summary = "The comprehensive WSGI web application library."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 dependencies = [
     "MarkupSafe>=2.1.1",
 ]
@@ -2596,6 +2601,7 @@ version = "0.43.0"
 requires_python = ">=3.8"
 summary = "A built-package format for Python"
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "wheel-0.43.0-py3-none-any.whl", hash = "sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81"},
     {file = "wheel-0.43.0.tar.gz", hash = "sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85"},
@@ -2607,6 +2613,7 @@ version = "1.16.0"
 requires_python = ">=3.6"
 summary = "Module for decorators, wrappers and monkey patching."
 groups = ["default"]
+marker = "platform_system == \"Windows\""
 files = [
     {file = "wrapt-1.16.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:1a5db485fe2de4403f13fafdc231b0dbae5eca4359232d2efc79025527375b09"},
     {file = "wrapt-1.16.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:75ea7d0ee2a15733684badb16de6794894ed9c55aa5e9903260922f0482e687d"},

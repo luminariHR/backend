@@ -7,6 +7,7 @@ from .models import *
 from .serializers import *
 from django.conf import settings
 from rest_framework.decorators import action
+from .tasks import summarize
 
 
 class JobPostingViewSet(viewsets.ModelViewSet):
@@ -78,8 +79,17 @@ class AnswerView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            applicant_name = serializer.validated_data["applicant_name"]
+            applicant_email = serializer.validated_data["applicant_email"]
+
+            # summarize.deley(posting_id, applicant_name, applicant_email)
+            summarize.apply(args=[posting_id, applicant_name, applicant_email])
+
+            return Response(
+                {"applicant_name": applicant_name, "applicant_email": applicant_email},
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -154,5 +164,5 @@ class SummaryViewSet(viewsets.ModelViewSet):
                 {"error": "posting_id and applicant_email are required."}, status=400
             )
 
-        serializer = self.get_serializer(summary)
+        serializer = self.get_serializer(summary, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
