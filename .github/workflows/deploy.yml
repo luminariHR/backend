@@ -62,7 +62,8 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
           scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/backend
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
+          ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
+                      git clone git@github.com:luminariHR/backend.git /home/dev/test &&
                       cd /home/dev/backend &&
                       sudo git config --global --add safe.directory /home/dev/backend &&
                       git checkout main &&
