@@ -3,6 +3,7 @@ import re, os, json
 import csv
 from openai import OpenAI
 from transformers import pipeline
+from django.conf import settings
 
 summarizer = pipeline(
     "summarization",
@@ -89,7 +90,7 @@ def job_tech(applicant):
             for row in data:
                 data_list.add(row["Inner Text"])
         jobs_list = list(data_list)
-        client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
         # 질문 및 응답을 처리할 함수
         def process_question(system_message, user_prompt):
