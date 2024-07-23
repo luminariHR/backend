@@ -7,6 +7,7 @@ from rest_framework import status
 from django.db.models import Q
 from collections import Counter
 from users.models import Employee
+from django.db.models import OuterRef, Subquery
 
 
 class ChatRoomViewSet(viewsets.ModelViewSet):
@@ -16,9 +17,17 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_id = self.request.user.id
 
-        chat_rooms = ChatRoom.objects.filter(
-            chatroomparticipant__employee_id=user_id
-        ).distinct()
+        latest_message_subquery = (
+            Message.objects.filter(chat_room=OuterRef("pk"))
+            .order_by("-timestamp")
+            .values("timestamp")[:1]
+        )
+
+        chat_rooms = (
+            ChatRoom.objects.filter(participants__id=user_id)
+            .annotate(latest_message_time=Subquery(latest_message_subquery))
+            .order_by("-latest_message_time")
+        )
 
         return chat_rooms
 
