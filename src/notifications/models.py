@@ -13,6 +13,7 @@ class Notification(AbstractBaseModel):
     AGENDA_REQUESTED = "agenda_requested"  # 문서 결재 요청
     PTO_REQUESTED = "pto_requested"
     PTO_REVIEWED = "pto_reviewed"
+    NEW_MESSAGE = "new_message"
 
     NOTIFICATION_TYPE_CHOICES = (
         (TO_DO_ASSIGNED, "To Do Assigned"),
@@ -22,6 +23,7 @@ class Notification(AbstractBaseModel):
         (AGENDA_REQUESTED, "Agenda Requested"),
         (PTO_REQUESTED, "PTO Requested"),
         (PTO_REVIEWED, "PTO Reviewed"),
+        (NEW_MESSAGE, "New Message"),
     )
 
     receiver = models.ForeignKey(

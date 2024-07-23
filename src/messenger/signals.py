@@ -4,42 +4,45 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import Message, ChatRoomParticipant
 from users.models import Employee
+from notifications.models import Notification
 from notifications.utils import send_notification
 
 
 @receiver(post_save, sender=Message)
 def handle_new_message(sender, instance: Message, **kwargs):
-    room_group_name = f"chat_{instance.chat_room.id}"
-    channel_layer = get_channel_layer()
+    chat_room = instance.chat_room
+    sender_id = instance.sender.id
+    participants = ChatRoomParticipant.objects.filter(
+        chat_room=chat_room, left_at__isnull=True
+    ).values_list("employee_id", flat=True)
 
-    async def get_group_channels():
-        return await channel_layer.group_channels(room_group_name)
+    participants_to_notify = [
+        user_id for user_id in participants if user_id != sender_id
+    ]
+    message = f"새로운 메시지가 채팅방에 도착했습니다: {chat_room.name}"
 
-    async def get_all_participants():
-        return ChatRoomParticipant.objects.filter(
-            chat_room=instance.chat_room, left_at__isnull=True
-        ).values_list("employee_id", flat=True)
-
-    connected_channels = async_to_sync(get_group_channels)()
-    all_participants = async_to_sync(get_all_participants)()
-
-    connected_user_ids = set()
-    for channel in connected_channels:
-        user_id = int(channel.split("_")[-1])
-        connected_user_ids.add(user_id)
-
-    disconnected_user_ids = set(all_participants) - connected_user_ids
-
-    for user_id in disconnected_user_ids:
+    for user_id in participants_to_notify:
         try:
-            user = Employee.objects.get(id=user_id)
-            message = f"새로운 메시지가 채팅방에 도착했습니다: {instance.content}"
-            # context = {
-            #     "from": {
-            #         "name": instance.sender.name,
-            #     },
-            #     "path": f"/chat/{instance.chat_room.id}",
-            # }
-            send_notification(user.id, message, "new_message")
-        except Employee.DoesNotExist:
+            unread_notification = Notification.objects.filter(
+                receiver_id=user_id,
+                message=message,
+                notification_type="new_message",
+                is_read=False,
+            ).first()
+
+            if not unread_notification:
+                sender_name = instance.sender.name
+                if instance.sender.profile_image:
+                    sender_profile_image_url = instance.sender.profile_image.url
+                else:
+                    sender_profile_image_url = None
+                content = {
+                    "from": {
+                        "name": sender_name,
+                        "profile_image": sender_profile_image_url,
+                    },
+                    "path": f"/messenger/chatrooms/{chat_room.id}",
+                }
+                send_notification(user_id, message, "new_message", content)
+        except Notification.DoesNotExist:
             continue
