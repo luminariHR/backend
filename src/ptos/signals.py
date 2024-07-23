@@ -30,7 +30,7 @@ def send_pto_notification(sender, instance: PTO, created, **kwargs):
                 "name": employee_name,
                 "profile_image": employee_profile_image_url,
             },
-            "path": f"/vacation/details/{str(instance.id)}",
+            "path": f"/vacation/{str(instance.id)}",
         }
         send_notification(employee.id, message, "pto_reviewed", context)
     elif instance.status == "rejected":
@@ -40,6 +40,6 @@ def send_pto_notification(sender, instance: PTO, created, **kwargs):
                 "name": employee_name,
                 "profile_image": employee_profile_image_url,
             },
-            "path": f"/vacation/details/{str(instance.id)}",
+            "path": f"/vacation/{str(instance.id)}",
         }
         send_notification(employee.id, message, "pto_reviewed", context)
