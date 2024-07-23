@@ -22,7 +22,7 @@ class VectorDBConnectionManager:
     #     )
     #     return connection
 
-    def get_connection(self, db_name, client, embeddings):
+    def get_connection(self, db_name, client, embeddings) -> SupabaseVectorStore:
         if db_name in self.clients:
             return self.clients[db_name]
         else:

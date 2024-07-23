@@ -14,3 +14,6 @@ class ChatbotDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatbotDocument
         fields = ["id", "name", "description", "file", "category"]
+
+    def delete(self, instance):
+        instance.delete()

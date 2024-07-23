@@ -40,12 +40,27 @@ class UserInviteSerializer(serializers.ModelSerializer):
         return filtered_data
 
 
+class MemberSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employee
+        fields = [
+            "id",
+            "name",
+            "employee_id",
+            "profile_image",
+            "job_title",
+            "is_ooo",
+        ]
+
+
 class DepartmentSerializer(serializers.ModelSerializer):
     is_head = serializers.BooleanField(read_only=True)
+    members = MemberSerializer(many=True)
 
     class Meta:
         model = Department
-        fields = ["id", "name", "is_head"]
+        fields = ["id", "name", "members", "is_head"]
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -70,6 +85,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         "job_title",
         "department_id",
         "is_head",
+        "is_ooo",
     ]
     is_hr_admin = serializers.BooleanField(write_only=False, required=False)
     is_department_head = serializers.SerializerMethodField(read_only=True)

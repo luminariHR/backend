@@ -9,27 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged
-        ports:
-          - 80:80
+#    services:
+#      docker:
+#        image: docker:19.03.12
+#        options: --privileged
+#        ports:
+#          - 80:80
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#
+#      - name: Cache Docker layers
+#        uses: actions/cache@v2
+#        with:
+#          path: /tmp/.buildx-cache
+#          key: ${{ runner.os }}-buildx-${{ github.sha }}
+#          restore-keys: |
+#            ${{ runner.os }}-buildx-
 
       - name: Create .env file
         run: |
@@ -51,17 +51,6 @@ jobs:
               echo 'EMAIL_HOST_PASSWORD = "${{ secrets.DEV_EMAIL_HOST_PASSWORD }}"'
           } > .env.dev
 
-      - name: Build and push Docker images
-        env:
-          DOCKER_BUILDKIT: 1
-          COMPOSE_DOCKER_CLI_BUILD: 1
-        run: |
-          docker-compose -f docker-compose.yml build
-          docker save luminari_nginx:latest -o luminari_nginx.tar
-          docker save luminari_web:latest -o luminari_web.tar
-          docker save luminari_certbot:latest -o luminari_certbot.tar
-          docker save luminari_celery:latest -o luminari_celery.tar
-
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
@@ -72,11 +61,23 @@ jobs:
           echo "${{ secrets.DEV_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.DEV_SSH_HOST }} >> ~/.ssh/known_hosts
-          scp docker-compose.yml luminari_nginx.tar luminari_web.tar luminari_certbot.tar luminari_celery.tar ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/
+          scp .env.dev ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }}:/home/dev/backend
           ssh ${{ secrets.DEV_SSH_USERNAME }}@${{ secrets.DEV_SSH_HOST }} "
-                      sudo docker compose -f /home/dev/docker-compose.yml down &&
+                      cd /home/dev/backend &&
+                      sudo git config --global --add safe.directory /home/dev/backend &&
+                      git checkout main &&
+                      git pull &&
+                      sudo docker compose -f docker-compose.yml build &&
+                      sudo docker save luminari_nginx:latest -o /home/dev/luminari_nginx.tar &&
+                      sudo docker save luminari_web:latest -o /home/dev/luminari_web.tar &&
+                      sudo docker save luminari_certbot:latest -o /home/dev/luminari_certbot.tar &&
+                      sudo docker save luminari_celery:latest -o /home/dev/luminari_celery.tar &&
+                      sudo cp docker-compose.yml /home/dev/docker-compose.yml &&
+                      cd /home/dev/ &&
                       sudo docker load -i /home/dev/luminari_nginx.tar &&
                       sudo docker load -i /home/dev/luminari_web.tar &&
                       sudo docker load -i /home/dev/luminari_certbot.tar &&
                       sudo docker load -i /home/dev/luminari_celery.tar &&
-                      sudo docker compose -f /home/dev/docker-compose.yml up -d"
+                      sudo docker compose -f docker-compose.yml down &&
+                      sudo docker compose -f docker-compose.yml up -d &&
+                      sudo docker image prune -f"

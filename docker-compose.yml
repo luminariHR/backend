@@ -4,6 +4,7 @@ services:
       DJANGO_ENV: "development"
       TZ: "Asia/Seoul"
     image: luminari_web:latest
+    restart: always
     build:
       context: .
       dockerfile: docker/api/Dockerfile
@@ -18,6 +19,7 @@ services:
 
   redis:
     image: redis:latest
+    restart: always
     # ports:
     #   - "6379:6379"
 
@@ -26,6 +28,7 @@ services:
       context: .
       dockerfile: docker/celery/Dockerfile
     image: luminari_celery:latest
+    restart: always
     environment:
       DJANGO_ENV: "development"
       TZ: "Asia/Seoul"
