@@ -46,38 +46,44 @@ def process_profile_update(sender, instance, created, **kwargs):
     if not created:
         employee_id = instance.id
         delete_documents_associated_with_employee_id(employee_id)
-        if instance.mentor_profile:
-            content = json.dumps(
-                {
-                    "ID": instance.employee.id,
-                    "이름": instance.employee.name,
-                    "역할": "멘토",
-                    "직책": instance.employee.job_title,
-                    "거주지역": instance.employee.location,
-                    "MBTI": instance.employee.mbti,
-                    "취미/관심사": ", ".join(instance.employee.hobbies),
-                    "근속연수": datetime.datetime.now().year
-                    - instance.employee.start_date.year,
-                },
-                ensure_ascii=False,
-            )
-            add_profiles_to_vector_store.delay(content, instance.employee.id)
-        elif instance.mentee_profile:
-            content = json.dumps(
-                {
-                    "ID": instance.employee.id,
-                    "이름": instance.employee.name,
-                    "역할": "멘티",
-                    "직책": instance.employee.job_title,
-                    "거주지역": instance.employee.location,
-                    "MBTI": instance.employee.mbti,
-                    "취미/관심사": ", ".join(instance.employee.hobbies),
-                    "근속연수": datetime.datetime.now().year
-                    - instance.employee.start_date.year,
-                },
-                ensure_ascii=False,
-            )
-            add_profiles_to_vector_store.delay(content, instance.employee.id)
+        try:
+            if instance.mentor_profile:
+                content = json.dumps(
+                    {
+                        "ID": instance.id,
+                        "이름": instance.name,
+                        "역할": "멘토",
+                        "직책": instance.job_title,
+                        "거주지역": instance.location,
+                        "MBTI": instance.mbti,
+                        "취미/관심사": ", ".join(instance.hobbies),
+                        "근속연수": datetime.datetime.now().year
+                        - instance.start_date.year,
+                    },
+                    ensure_ascii=False,
+                )
+                add_profiles_to_vector_store.delay(content, instance.id)
+            elif instance.mentee_profile:
+                content = json.dumps(
+                    {
+                        "ID": instance.id,
+                        "이름": instance.name,
+                        "역할": "멘티",
+                        "직책": instance.job_title,
+                        "거주지역": instance.location,
+                        "MBTI": instance.mbti,
+                        "취미/관심사": ", ".join(instance.hobbies),
+                        "근속연수": datetime.datetime.now().year
+                        - instance.start_date.year,
+                    },
+                    ensure_ascii=False,
+                )
+                add_profiles_to_vector_store.delay(content, instance.id)
+        except (
+            Employee.mentor_profile.RelatedObjectDoesNotExist
+            or Employee.mentee_profile.RelatedObjectDoesNotExist
+        ):
+            pass
 
 
 @receiver(post_delete, sender=Mentee)
