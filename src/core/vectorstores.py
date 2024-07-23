@@ -1,4 +1,3 @@
-from langchain_postgres.vectorstores import PGVector
 from langchain_community.vectorstores import SupabaseVectorStore
 
 
@@ -15,22 +14,22 @@ class VectorDBConnectionManager:
     def __init__(self):
         self.clients = {}
 
-    # @staticmethod
-    # def create_connection(username, password, host, port, db_name):
-    #     connection = (
-    #         f"postgresql+psycopg://{username}:{password}@{host}:{port}/{db_name}"
-    #     )
-    #     return connection
-
-    def get_connection(self, db_name, client, embeddings) -> SupabaseVectorStore:
+    def get_connection(
+        self,
+        db_name,
+        client,
+        embeddings,
+        table_name="documents",
+        query_name="match_documents",
+    ) -> SupabaseVectorStore:
         if db_name in self.clients:
             return self.clients[db_name]
         else:
             self.clients[db_name] = SupabaseVectorStore(
                 embedding=embeddings,
                 client=client,
-                table_name="documents",
-                query_name="match_documents",
+                table_name=table_name,
+                query_name=query_name,
                 chunk_size=1000,
             )
             return self.clients[db_name]

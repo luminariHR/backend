@@ -1,13 +1,10 @@
 import os
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.conf import settings
-from langchain_openai import OpenAIEmbeddings
-from supabase.client import create_client
+from core.vector_models import Documents
+from core.vectorstores import VectorDBConnectionManager
 from .models import ChatbotDocument
-from .vector_models import Documents
 from .tasks import store_doc_to_vectorstore
-from .vectorstores import VectorDBConnectionManager
 
 
 connection_manager = VectorDBConnectionManager()

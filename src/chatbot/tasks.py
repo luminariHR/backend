@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_openai import OpenAIEmbeddings
 from supabase.client import create_client
 from .models import ChatbotDocument
-from .vectorstores import VectorDBConnectionManager
+from core.vectorstores import VectorDBConnectionManager
 import logging
 
 logger = logging.getLogger(__name__)

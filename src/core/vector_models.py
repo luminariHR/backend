@@ -11,3 +11,14 @@ class Documents(models.Model):
     class Meta:
         managed = False
         db_table = "documents"
+
+
+class MentorshipDocuments(models.Model):
+    id = models.UUIDField(primary_key=True)
+    content = models.TextField(blank=True, null=True)
+    metadata = models.JSONField(blank=True, null=True)
+    embedding = VectorField(dimensions=1536, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "mentorship_documents"

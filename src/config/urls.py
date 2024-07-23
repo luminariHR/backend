@@ -72,6 +72,11 @@ urlpatterns = [
     re_path(r"api/(?P<version>(v1|v2))/recruitment/", include("recruitment.urls")),
     # 알림
     re_path(r"api/(?P<version>(v1|v2))/notifications/", include("notifications.urls")),
+    # 멘토링
+    re_path(r"api/(?P<version>(v1|v2))/mentorship/", include("mentorship.urls")),
+    re_path(
+        r"api/(?P<version>(v1|v2))/admin/mentorship/", include("mentorship.admin_urls")
+    ),
 ]
 
 if settings.DEBUG:
