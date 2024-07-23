@@ -9,7 +9,7 @@ from supabase.client import create_client
 from core.permissions import IsHRAdmin
 from .models import ChatbotMessage, ChatbotDocument
 from .serializers import MessageSerializer, ChatbotDocumentSerializer
-from .vectorstores import VectorDBConnectionManager
+from core.vectorstores import VectorDBConnectionManager
 from .utils import answer_question_based_on_metadata
 
 connection_manager = VectorDBConnectionManager()
