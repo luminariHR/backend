@@ -9,10 +9,10 @@ class Notification(AbstractBaseModel):
     TO_DO_ASSIGNED = "to_do_assigned"
     EVENT_CREATED = "event_created"
     APPOINTMENT_CREATED = "appointment_created"  # 인사발령
-    AGENDA_REVIEWED = "agenda_reviewed"
-    AGENDA_REQUESTED = "agenda_requested"
-    PTO_REQUESTED = "pto_requested"  # 문서 결재 리뷰
-    PTO_REVIEWED = "pto_reviewed"  # 문서 결재 요청
+    AGENDA_REVIEWED = "agenda_reviewed"  # 문서 결재 리뷰
+    AGENDA_REQUESTED = "agenda_requested"  # 문서 결재 요청
+    PTO_REQUESTED = "pto_requested"
+    PTO_REVIEWED = "pto_reviewed"
     NEW_MESSAGE = "new_message"
 
     NOTIFICATION_TYPE_CHOICES = (
