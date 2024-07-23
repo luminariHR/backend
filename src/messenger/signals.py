@@ -41,7 +41,7 @@ def handle_new_message(sender, instance: Message, **kwargs):
                         "name": sender_name,
                         "profile_image": sender_profile_image_url,
                     },
-                    "path": f"/messenger/chatrooms/{chat_room.id}",
+                    "path": "/chatting",
                 }
                 send_notification(user_id, message, "new_message", content)
         except Notification.DoesNotExist:

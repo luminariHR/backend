@@ -86,7 +86,7 @@ def display_colored_text(result):
     colored_text = ""
     for word, e in result["words"]:
         if e == 0:
-            colored_text += color_text(word, "black") + " "
+            colored_text += word + " "
         elif e == 1:
             colored_text += color_text(word, "red") + " "
         elif e == 2:
