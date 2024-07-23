@@ -9,8 +9,10 @@ class Notification(AbstractBaseModel):
     TO_DO_ASSIGNED = "to_do_assigned"
     EVENT_CREATED = "event_created"
     APPOINTMENT_CREATED = "appointment_created"  # 인사발령
-    AGENDA_REVIEWED = "agenda_reviewed"
-    AGENDA_REQUESTED = "agenda_requested"
+    AGENDA_REVIEWED = "agenda_reviewed"  # 문서 결재 리뷰
+    AGENDA_REQUESTED = "agenda_requested"  # 문서 결재 요청
+    PTO_REQUESTED = "pto_requested"
+    PTO_REVIEWED = "pto_reviewed"
 
     NOTIFICATION_TYPE_CHOICES = (
         (TO_DO_ASSIGNED, "To Do Assigned"),
@@ -18,14 +20,19 @@ class Notification(AbstractBaseModel):
         (APPOINTMENT_CREATED, "Appointment Created"),
         (AGENDA_REVIEWED, "Agenda Reviewed"),
         (AGENDA_REQUESTED, "Agenda Requested"),
+        (PTO_REQUESTED, "PTO Requested"),
+        (PTO_REVIEWED, "PTO Reviewed"),
     )
 
-    receiver = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name="received_notifications"
+    )
     message = models.TextField()
     notification_type = models.CharField(
         choices=NOTIFICATION_TYPE_CHOICES, max_length=30
     )
     is_read = models.BooleanField(default=False)
+    context = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"[{self.notification_type}] {self.receiver.name}: {self.message}"

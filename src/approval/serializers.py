@@ -141,8 +141,20 @@ class AgendaReviewRequestCreateSerializer(serializers.Serializer):
                 status="pending" if order == 0 else "standby",
             )
             if order == 0:
-                message = f"{reviewer.name}님, 새로운 결재 요청 1건이 들어왔습니다."
-                send_notification(reviewer.id, message, "agenda_requested")
+                drafter_name = agenda.drafter.name
+                if agenda.drafter.profile_image:
+                    drafter_profile_image_url = agenda.drafter.profile_image.url
+                else:
+                    drafter_profile_image_url = None
+                message = f"{drafter_name}님이 새로운 결재 1건을 요청했습니다."
+                context = {
+                    "from": {
+                        "name": drafter_name,
+                        "profile_image": drafter_profile_image_url,
+                    },
+                    "path": f"/approval/details/{agenda.id}",
+                }
+                send_notification(reviewer.id, message, "agenda_requested", context)
 
         # 참조 관계 생성
         for referrer_id in referrer_ids:

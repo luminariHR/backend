@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "chatbot",
     "approval",
     "messenger",
+    "ptos",
     "corsheaders",
     "django_extensions",
     "recruitment",
