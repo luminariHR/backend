@@ -31,6 +31,18 @@ def handle_new_message(sender, instance: Message, **kwargs):
             ).first()
 
             if not unread_notification:
-                send_notification(user_id, message, "new_message")
+                sender_name = instance.sender.name
+                if instance.sender.profile_image:
+                    sender_profile_image_url = instance.sender.profile_image.url
+                else:
+                    sender_profile_image_url = None
+                content = {
+                    "from": {
+                        "name": sender_name,
+                        "profile_image": sender_profile_image_url,
+                    },
+                    "path": f"/messenger/chatrooms/{chat_room.id}",
+                }
+                send_notification(user_id, message, "new_message", content)
         except Notification.DoesNotExist:
             continue
