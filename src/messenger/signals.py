@@ -32,5 +32,5 @@ def handle_new_message(sender, instance: Message, **kwargs):
 
             if not unread_notification:
                 send_notification(user_id, message, "new_message")
-        except Employee.DoesNotExist:
+        except Notification.DoesNotExist:
             continue
