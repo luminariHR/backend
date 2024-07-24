@@ -89,6 +89,13 @@ class Employee(AbstractUser):
     def name(self):
         return f"{self.last_name}{self.first_name}"
 
+    def is_ooo(self):
+        ptos = self.ptos
+        today = timezone.now().date()
+        return ptos.filter(
+            status="approved", start_date__gte=today, end_date__lte=today
+        ).exists()
+
     def resize_profile_image(self):
         img = Image.open(self.profile_image.path)
         max_size = (400, 400)

@@ -83,8 +83,6 @@ class AnswerView(APIView):
             applicant_name = serializer.validated_data["applicant_name"]
             applicant_email = serializer.validated_data["applicant_email"]
 
-            summarize.deley(posting_id, applicant_name, applicant_email)
-
             return Response(
                 {"applicant_name": applicant_name, "applicant_email": applicant_email},
                 status=status.HTTP_201_CREATED,

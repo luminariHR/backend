@@ -1,19 +1,40 @@
 from .hanspell import spell_checker
-import re, os, json
+import re, json
 import csv
 from openai import OpenAI
-from transformers import pipeline
 from django.conf import settings
 
-summarizer = pipeline(
-    "summarization",
-    model="aoome123/my_model",
-    max_length=600,
-    no_repeat_ngram_size=3,
-    min_length=150,
-    length_penalty=2.0,
-    num_beams=1,
-)
+
+class ModelLoader:
+    _model = None
+
+    @classmethod
+    def get_model(cls):
+        if cls._model is None:
+            from transformers import pipeline
+
+            model = pipeline(
+                "summarization",
+                model="aoome123/my_model",
+                max_length=600,
+                no_repeat_ngram_size=3,
+                min_length=150,
+                length_penalty=2.0,
+                num_beams=1,
+            )
+            cls._model = model
+        return cls._model
+
+
+# summarizer = pipeline(
+#     "summarization",
+#     model="aoome123/my_model",
+#     max_length=600,
+#     no_repeat_ngram_size=3,
+#     min_length=150,
+#     length_penalty=2.0,
+#     num_beams=1,
+# )
 
 
 def hanspell_model(applicant):
@@ -178,5 +199,6 @@ def job_tech(applicant):
 
 
 def summary_model(text):
+    summarizer = ModelLoader.get_model()
     sum_text = summarizer(text)
     return sum_text
