@@ -32,7 +32,7 @@ services:
     environment:
       DJANGO_ENV: "development"
       TZ: "Asia/Seoul"
-    command: celery -A config worker --loglevel=info
+    command: celery -A config worker --concurrency=1 --loglevel=info
     volumes:
       - ./media:/app/media
     depends_on:
