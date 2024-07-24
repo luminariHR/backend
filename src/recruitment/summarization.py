@@ -19,8 +19,8 @@ class ModelLoader:
                 max_length=600,
                 no_repeat_ngram_size=3,
                 min_length=150,
-                length_penalty=2.0,
-                num_beams=1,
+                length_penalty=1.0,
+                num_beams=2,
             )
             cls._model = model
         return cls._model
