@@ -28,30 +28,7 @@ class EventsView(APIView):
             Q(start_date__gte=start_date) & Q(start_date__lte=end_date)
         )
         serializer = EventSerializer(attendance, context=context, many=True)
-        days = {}
-        for event in serializer.data:
-            if event["start_date"] in days:
-                days[event["start_date"]]["events"].append(
-                    {
-                        "id": event["id"],
-                        "title": event["title"],
-                        "start_date": event["start_date"],
-                    }
-                )
-                days[event["start_date"]]["count"] += 1
-            else:
-                days[event["start_date"]] = {
-                    "count": 1,
-                    "events": [
-                        {
-                            "id": event["id"],
-                            "title": event["title"],
-                            "start_date": event["start_date"],
-                        }
-                    ],
-                }
-
-        return Response({"data": days}, 200)
+        return Response(serializer.data, 200)
 
 
 class EventView(APIView):
