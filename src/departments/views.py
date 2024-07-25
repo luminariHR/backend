@@ -21,7 +21,7 @@ class DepartmentListView(APIView):
             include_deleted = True
         else:
             include_deleted = False
-        departments = Department.objects.filter(
+        departments = Department.objects.prefetch_related("head").filter(
             Q(is_deleted=False) | Q(is_deleted=include_deleted)
         )
         serializer = DepartmentListSerializer(departments, many=True)
