@@ -6,14 +6,24 @@ from rest_framework.views import APIView
 from .serializers import EmployeeSerializer, UserInviteSerializer
 from .models import Employee
 from core.permissions import IsHRAdmin, IsHRAdminOrSelf
+from django.db.models import Prefetch
+from departments.models import Department
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.filter(is_superuser=False)
     serializer_class = EmployeeSerializer
 
     def get_queryset(self):
-        return Employee.objects.filter(is_superuser=False)
+        if self.action in ["list", "retrieve"]:
+            queryset = Employee.objects.prefetch_related(
+                Prefetch(
+                    "department",
+                    queryset=Department.objects.prefetch_related("members"),
+                )
+            ).filter(is_superuser=False)
+        else:
+            queryset = Employee.objects.filter(is_superuser=False)
+        return queryset
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
@@ -37,7 +47,11 @@ class MyProfileView(APIView):
         context = {"request": request}
         # 본인 프로필
         user_id = request.user.id
-        employee = Employee.objects.get(id=user_id)
+        employee = Employee.objects.prefetch_related(
+            Prefetch(
+                "department", queryset=Department.objects.prefetch_related("members")
+            )
+        ).get(id=user_id)
         serializer = EmployeeSerializer(employee, context=context)
         return Response(serializer.data, status=200)
 

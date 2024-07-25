@@ -1,7 +1,6 @@
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.db import transaction
-from django.utils.crypto import get_random_string
 from rest_framework import serializers
 from departments.models import Department
 from .models import Employee, Project
