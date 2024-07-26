@@ -55,12 +55,33 @@ Git hook을 통해 커밋 전에 코드 스타일 등 간단한 코드 리뷰를
    pre-commit install
    ```
 
-#### Django 로컬 서버 시작
+#### Django 로컬 서버 초기 설정 및 시작
+1. `.env.example`을 기반으로 `.env.local` 파일 작성
+```
+SECRET_KEY = ""
+ALLOWED_HOSTS = ""
+DEBUG = ""
+CSRF_TRUSTED_ORIGINS=""
+NAVER_OCR_SECRET_KEY=""
+DB_NAME=""
+DB_USER=""
+DB_PASSWORD=""
+DB_HOST=""
+DB_PORT=""
+OPENAI_API_KEY=""
+SUPABASE_URL=""
+SUPABASE_KEY=""
+EMAIL_HOST_USER=""
+EMAIL_HOST_PASSWORD=""
+```
+
+3. DB 마이그레이션 및 서버 시작
 ```
 cd src
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createcustomgroup
+python manage.py createptotype
 python manage.py runserver
 ```
 
