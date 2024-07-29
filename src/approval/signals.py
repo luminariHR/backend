@@ -27,7 +27,10 @@ def update_next_approval_step(sender, instance: ReviewStep, **kwargs):
                 },
                 "path": f"/approval/details/{next_step.agenda.id}",
             }
-            send_notification(reviewer.id, message, "agenda_requested", context)
+            try:
+                send_notification(reviewer.id, message, "agenda_requested", context)
+            except:
+                pass # TODO: Better error handling
         else:
             # 모든 결재 과정이 "approved"면 결재 "approved" 처리
             instance.agenda.status = "approved"
@@ -41,7 +44,10 @@ def update_next_approval_step(sender, instance: ReviewStep, **kwargs):
                 },
                 "path": f"/approval/details/{instance.agenda.id}",
             }
-            send_notification(drafter.id, message, "agenda_reviewed", context)
+            try:
+                send_notification(drafter.id, message, "agenda_reviewed", context)
+            except:
+                pass # TODO: Better error handling
     elif instance.status == "rejected":
         instance.agenda.status = "rejected"
         instance.agenda.save()
@@ -54,4 +60,7 @@ def update_next_approval_step(sender, instance: ReviewStep, **kwargs):
             },
             "path": f"/approval/details/{instance.agenda.id}",
         }
-        send_notification(drafter.id, message, "agenda_reviewed", context)
+        try:
+            send_notification(drafter.id, message, "agenda_reviewed", context)
+        except:
+                pass # TODO: Better error handling
