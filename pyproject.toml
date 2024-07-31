@@ -1,9 +1,13 @@
 [project]
 name = "luminari-backend"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "Backend source code for Luminari"
 authors = [
     {name = "Si Young Byun", email = "siyoung.byun@gmail.com"},
+    {name = "Sooyeol Ahn", email = "asl0619@naver.com"},
+    {name = "Jung Kyu Shin", email = "s21982198@gmail.com"},
+    {name = "Seungwoo Kim", email = "aoome123@naver.com"},
+    {name = "Junyoung Kang", email = "justin951222@naver.com"},
 ]
 dependencies = [
     "django>=5.0.6",
