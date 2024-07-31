@@ -1,7 +1,7 @@
 [project]
 name = "luminari-backend"
 version = "0.1.0"
-description = "루미나리 백엔드 소스코드"
+description = "Backend source code for Luminari"
 authors = [
     {name = "Si Young Byun", email = "siyoung.byun@gmail.com"},
     {name = "Sooyeol Ahn", email = "asl0619@naver.com"},
