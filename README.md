@@ -87,3 +87,9 @@ python manage.py runserver
 
 ### 개발 중 주의사항
 * __(어느 정도 안정화될 때까지) Pull Request (PR)을 통해서만 main 브랜치에 머지하기!__
+
+### 로컬 서버 구동
+```bash
+python manage.py runserver
+celery -A config worker -E --loglevel=info --pool=solo
+```
