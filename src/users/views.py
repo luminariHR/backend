@@ -6,12 +6,14 @@ from rest_framework.views import APIView
 from .serializers import EmployeeSerializer, UserInviteSerializer
 from .models import Employee
 from core.permissions import IsHRAdmin, IsHRAdminOrSelf
+from core.pagination import DefaultLimitOffsetPagination
 from django.db.models import Prefetch
 from departments.models import Department
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
+    pagination_class = DefaultLimitOffsetPagination
 
     def get_queryset(self):
         if self.action in ["list", "retrieve"]:
