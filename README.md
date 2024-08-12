@@ -75,21 +75,35 @@ EMAIL_HOST_USER=""
 EMAIL_HOST_PASSWORD=""
 ```
 
-3. DB 마이그레이션 및 서버 시작
+3. DB 마이그레이션 및 초기 설정
 ```
 cd src
-python manage.py makemigrations
 python manage.py migrate
 python manage.py createcustomgroup
 python manage.py createptotype
-python manage.py runserver
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='admin@luminari.com').exists() or User.objects.create_superuser(email='admin@luminari.com', password='luminari1!')"
 ```
 
 ### 개발 중 주의사항
 * __(어느 정도 안정화될 때까지) Pull Request (PR)을 통해서만 main 브랜치에 머지하기!__
 
 ### 로컬 서버 구동
+
+1. 첫번째 터미널:
 ```bash
+docker compose -f docker-compose.local.yml up
+```
+
+2. 두번째 터미널:
+```bash
+cd src
 python manage.py runserver
+```
+
+3. 세번째 터미널:
+```bash
+cd src
 celery -A config worker -E --loglevel=info --pool=solo
 ```
+
+주의: AI 관련 기능은 API KEY를 제대로 넣어줘야 작동합니다.
