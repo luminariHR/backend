@@ -39,25 +39,28 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def perform_create(self, serializer):
-        embeddings = OpenAIEmbeddings(
-            openai_api_key=settings.OPENAI_API_KEY,
-            model="text-embedding-3-small",
-        )
-        supabase_client = create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_KEY,
-        )
-        vector_store = connection_manager.get_connection(
-            db_name="postgres",
-            client=supabase_client,
-            embeddings=embeddings,
-        )
-        retriever = vector_store.as_retriever(
-            search_kwargs={"filter": {"category": self.request.data["category"]}}
-        )
-        response = answer_question_based_on_metadata(
-            retriever, self.request.data["question"]
-        )
+        if settings.OPENAI_API_KEY:
+            embeddings = OpenAIEmbeddings(
+                openai_api_key=settings.OPENAI_API_KEY,
+                model="text-embedding-3-small",
+            )
+            supabase_client = create_client(
+                settings.SUPABASE_URL,
+                settings.SUPABASE_KEY,
+            )
+            vector_store = connection_manager.get_connection(
+                db_name="postgres",
+                client=supabase_client,
+                embeddings=embeddings,
+            )
+            retriever = vector_store.as_retriever(
+                search_kwargs={"filter": {"category": self.request.data["category"]}}
+            )
+            response = answer_question_based_on_metadata(
+                retriever, self.request.data["question"]
+            )
+        else:
+            response = f"{self.request.data['question']}에 대한 답변입니다. API Key를 넣어주세요."
         serializer.save(author=self.request.user, answer=response)
 
 
