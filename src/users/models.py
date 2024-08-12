@@ -13,21 +13,21 @@ def user_directory_path(instance, filename):
 
 class EmployeeManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
+        """Create a new user profile"""
         if not email:
-            raise ValueError("The Email field must be set")
+            raise ValueError("User must have an email address")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
         user.save(using=self._db)
+        user.set_password(password)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
+    def create_superuser(self, email, password, **extra_fields):
+        """Create a new superuser profile"""
+        user = self.create_user(email, password, **extra_fields)
+        user.is_superuser = True
+        user.is_staff = True
 
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
         user.save(using=self._db)
 
         return user
