@@ -107,3 +107,10 @@ celery -A config worker -E --loglevel=info --pool=solo
 ```
 
 주의: AI 관련 기능은 API KEY를 제대로 넣어줘야 작동합니다.
+
+## Contributors
+- 변시영 (siyoung.byun@gmail.com),
+- 안수열 (asl0619@naver.com),
+- 신정규 (s21982198@gmail.com),
+- 김승우 (aoome123@naver.com),
+- 강준영 (justin951222@naver.com)
